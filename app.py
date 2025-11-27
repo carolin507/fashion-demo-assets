@@ -79,17 +79,18 @@ html, body, [class*="css"] {
 /* Hero Banner 圖片版型 A */
 .hero-wrapper {
     position: relative;
-    width: calc(100% + 2 * var(--page-pad));
-    margin: 0 calc(-1 * var(--page-pad)) 28px;
-    border-radius: 22px;
+    width: 100vw;
+    margin-left: calc(50% - 50vw); 
+    margin-right: calc(50% - 50vw);
+    height: 360px;
     overflow: hidden;
+    border-radius: 22px
     box-shadow: var(--shadow-soft);
 }
 .hero-img {
     width: 100%;
-    height: 320px;
+    height: 100%;
     object-fit: cover;
-    display: block;
 }
 .hero-overlay {
     position: absolute;
