@@ -78,20 +78,22 @@ html, body, [class*="css"] {
 
 /* Hero Banner 圖片版型 A */
 .hero-wrapper {
-    position: relative;
-    width: 100vw;
-    margin-left: calc(50% - 50vw); 
-    margin-right: calc(50% - 50vw);
-    height: 360px;
-    overflow: hidden;
-    border-radius: 22px
-    box-shadow: var(--shadow-soft);
+    position: relative !important;
+    width: 100vw !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    height: 360px !important;
+    overflow: hidden !important;
+    box-shadow: var(--shadow-soft) !important;
 }
+
 .hero-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
 }
+            
 .hero-overlay {
     position: absolute;
     inset: 0;
