@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import streamlit as st
 
-st.set_page_config(page_title="專案介紹", layout="wide")
+st.set_page_config(page_title="專案介紹", layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown(
     """

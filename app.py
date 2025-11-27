@@ -311,7 +311,7 @@ hero_url = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/mai
 st.markdown(
     f"""
     <div class="hero-wrapper">
-        <img src="{hero_url}" class="hero-img" />
+        <img src="{hero_url}" class="hero-img" />   
         <div class="hero-overlay">
             <div class="hero-text">
                 <div class="hero-title">AI 穿搭靈感推薦</div>
