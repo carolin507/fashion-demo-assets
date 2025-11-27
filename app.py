@@ -33,6 +33,7 @@ st.markdown("""
     --accent-2: #E79BAF;
     --border-soft: rgba(0,0,0,0.06);
     --shadow-soft: 0 8px 20px rgba(15,15,20,0.08);
+    --page-pad: min(5vw, 38px);
 }
 
 html, body, [class*="css"] {
@@ -43,9 +44,10 @@ html, body, [class*="css"] {
     background: var(--bg-main);
 }
 
-block-container {
-    max-width: 1120px;
-    padding-top: 0 !important;
+.block-container {
+    max-width: 1180px;
+    width: 100%;
+    padding: 0 var(--page-pad) 32px;
     margin-top: 0 !important;
 }
 /* Navbar 上方 Logo + 導覽文字（只是視覺，真正切頁由 Streamlit 做） */
@@ -77,10 +79,11 @@ block-container {
 /* Hero Banner 圖片版型 A */
 .hero-wrapper {
     position: relative;
+    width: calc(100% + 2 * var(--page-pad));
+    margin: 0 calc(-1 * var(--page-pad)) 28px;
     border-radius: 22px;
     overflow: hidden;
     box-shadow: var(--shadow-soft);
-    margin-bottom: 28px;
 }
 .hero-img {
     width: 100%;
@@ -193,6 +196,11 @@ block-container {
 
 /* 行動版調整 */
 @media (max-width: 768px) {
+    .hero-wrapper {
+        width: 100%;
+        margin: 0 0 24px 0;
+        border-radius: 0;
+    }
     .hero-img {
         height: 260px;
     }
