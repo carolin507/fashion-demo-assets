@@ -13,8 +13,9 @@ from PIL import Image
 # Page config
 # ------------------------------------------------------------
 st.set_page_config(
-    page_title="🪩 AI 穿搭靈感 Demo",
-    layout="wide"
+    page_title="AI 穿搭靈感推薦 Demo",
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 # ------------------------------------------------------------
@@ -61,6 +62,12 @@ html, body, [class*="css"] {
     flex-wrap: wrap;
     color: #3E3029;
     font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-soft);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 .top-nav-left {
     font-family: 'Noto Serif TC';
@@ -213,6 +220,9 @@ html, body, [class*="css"] {
     }
     .hero-title { font-size: 24px; }
 }
+
+/* Hide legacy top nav; using sidebar navigation instead */
+.top-nav { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -229,6 +239,69 @@ st.markdown("""
   </div>
 </div>
 """, unsafe_allow_html=True)
+
+# ------------------------------------------------------------
+# Sidebar nav (links to other pages)
+# ------------------------------------------------------------
+with st.sidebar:
+    st.markdown("### Lookbook Studio")
+    st.markdown("""
+<style>
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+}
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f6f2eb;
+    color: #4a362f;
+    text-decoration: none;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    white-space: nowrap;  /* 讓文字不要被切成一直排 */
+}
+.sidebar-nav a:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+.sidebar-nav a .icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+</style>
+
+<div class="sidebar-nav">
+  <a href="https://fashion-demo-assets-homepage.streamlit.app/">
+    <span class="icon">🌟</span>AI 穿搭靈感推薦
+  </a>
+  <a href="https://fashion-demo-assets-lookbook.streamlit.app/">
+    <span class="icon">📸</span>街頭穿搭直擊
+  </a>
+  <a href="https://fashion-demo-assets-trend_color.streamlit.app/">
+    <span class="icon">🎨</span>本月流行色系
+  </a>
+  <a href="https://fashion-demo-assets-project.streamlit.app/">
+    <span class="icon">💡</span>專案介紹
+  </a>
+</div>
+""", unsafe_allow_html=True)
+
+
+
+
 
 # ------------------------------------------------------------
 # Hero Banner - GitHub raw URL
@@ -254,7 +327,7 @@ st.markdown(
 )
 
 # ------------------------------------------------------------
-# Mock 標籤與映射
+# Mock 標籤與對應中文
 # ------------------------------------------------------------
 pattern_labels = ["Solid", "Striped", "Floral", "Plaid", "Spotted"]
 
@@ -270,58 +343,25 @@ category_labels = [
 ]
 
 category_to_zh = {
-    "Top": "上衣", "T-Shirt": "T 恤", "Shirt": "襯衫", "Cardigan": "開襟衫",
+    "Top": "上衣", "T-Shirt": "T恤", "Shirt": "襯衫", "Cardigan": "開襟衫",
     "Blazer": "西裝外套", "Sweatshirt": "大學T", "Vest": "背心", "Jacket": "夾克",
-    "Dress": "洋裝", "Coat": "大衣", "Skirt": "裙子", "Pants": "長褲",
-    "Jeans": "牛仔褲", "Jumpsuit": "連身褲", "Kimono_Yukata": "和服/浴衣",
-    "Swimwear": "泳裝", "Stockings": "襪褲",
+    "Dress": "裙子", "Coat": "大衣", "Skirt": "裙裝", "Pants": "長褲",
+    "Jeans": "牛仔褲", "Jumpsuit": "連身裝", "Kimono_Yukata": "和服/浴衣",
+    "Swimwear": "泳裝", "Stockings": "襪子",
 }
 
 color_to_zh = {
     "Black": "黑色", "Gray": "灰色", "White": "白色", "Beige": "米色",
-    "Orange": "橘色", "Pink": "粉色", "Red": "紅色", "Green": "綠色",
-    "Brown": "咖啡色", "Blue": "藍色", "Yellow": "黃色", "Purple": "紫色",
+    "Orange": "橙色", "Pink": "粉色", "Red": "紅色", "Green": "綠色",
+    "Brown": "棕色", "Blue": "藍色", "Yellow": "黃色", "Purple": "紫色",
 }
 
 pattern_to_zh = {
-    "Solid": "素面", "Striped": "條紋", "Floral": "花紋",
+    "Solid": "純色", "Striped": "條紋", "Floral": "碎花",
     "Plaid": "格紋", "Spotted": "點點",
 }
 
-streetstyle_files = [
-    "20170324095254453_500.jpg",
-    "20170324095730988_500.jpg",
-    "20170324100124006_500.jpg",
-    "20170324100303683_500.jpg",
-    "20170324101207506_500.jpg",
-    "20170324101213181_500.jpg",
-    "20170324101342210_500.jpg",
-    "20170324101553293_500.jpg",
-    "20170324101642714_500.jpg",
-    "20170324101732000_500.jpg",
-    "20170324101754087_500.jpg",
-    "20170324101839553_500.jpg",
-    "20170324102113466_500.jpg",
-    "20170324102428957_500.jpg",
-    "20170324102521935_500.jpg",
-    "20170324102544688_500.jpg",
-    "20170324102806575_500.jpg",
-    "20170324103244682_500.jpg",
-    "20170324103356507_500.jpg",
-    "20170324103547162_500.jpg",
-]
-streetstyle_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/streetstyle/"
-
-product_files = [
-    "638992503203300000.jpg",
-    "638993154193030000.jpg",
-    "638993413666200000.jpg",
-    "638993433208400000.jpg",
-    "638993433310200000.jpg",
-]
-product_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/product/"
-
-
+# Helper labels and mock inference (demo only)
 def zh_label(label, table):
     return table.get(label, label)
 
@@ -358,20 +398,56 @@ def mock_recommendation(color, category, gender):
     dress_like = {"Dress","Jumpsuit","Kimono_Yukata","Swimwear"}
 
     if category in top_like:
-        cats = ["長褲", "牛仔褲", "裙子"]
+        cats = ["牛仔褲", "西裝褲", "裙裝"]
     elif category in dress_like:
-        cats = ["外套", "披肩", "襪褲"]
+        cats = ["外套", "配件", "鞋款"]
     elif category == "Skirt":
-        cats = ["上衣", "T 恤", "襯衫"]
+        cats = ["上衣", "T 恬", "襯衫"]
     elif category in {"Pants", "Jeans"}:
-        cats = ["上衣","T 恤","襯衫","外套"]
+        cats = ["上衣","T 恬","襯衫","外套"]
     else:
-        cats = ["上衣","長褲"]
+        cats = ["上衣","鞋款"]
 
     return {
         "bottom_color": bottom_colors.get(color, ["Black"]),
         "bottom_category": cats,
     }
+
+
+
+product_files = [
+    "638992503203300000.jpg",
+    "638993154193030000.jpg",
+    "638993413666200000.jpg",
+    "638993433208400000.jpg",
+    "638993433310200000.jpg",
+]
+product_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/product/"
+
+streetstyle_files = [
+    "20170324095254453_500.jpg",
+    "20170324095730988_500.jpg",
+    "20170324100124006_500.jpg",
+    "20170324100303683_500.jpg",
+    "20170324101207506_500.jpg",
+    "20170324101213181_500.jpg",
+    "20170324101342210_500.jpg",
+    "20170324101553293_500.jpg",
+    "20170324101642714_500.jpg",
+    "20170324101732000_500.jpg",
+    "20170324101754087_500.jpg",
+    "20170324101839553_500.jpg",
+    "20170324102113466_500.jpg",
+    "20170324102428957_500.jpg",
+    "20170324102521935_500.jpg",
+    "20170324102544688_500.jpg",
+    "20170324102806575_500.jpg",
+    "20170324103244682_500.jpg",
+    "20170324103356507_500.jpg",
+    "20170324103547162_500.jpg",
+]
+streetstyle_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/streetstyle/"
+
 
 
 # ------------------------------------------------------------
@@ -396,6 +472,7 @@ with col_u2:
 # 2. 顯示辨識結果 + 圖片
 # ------------------------------------------------------------
 if uploaded_img:
+    st.markdown('<div id="ai-result"></div>', unsafe_allow_html=True)
     img = Image.open(uploaded_img)
     buf = BytesIO()
     img.save(buf, format="PNG")
@@ -467,7 +544,8 @@ if uploaded_img:
     # --------------------------------------------------------
     # 類似商品示意
     # --------------------------------------------------------
-    
+    st.markdown('<div id="products"></div>', unsafe_allow_html=True)
+
     prod_samples = random.sample(product_files, k=3) if len(product_files) >= 3 else list(product_files)
     prod_items_html = "".join(
         f"<div class='prod-card-inline'>"
@@ -515,11 +593,12 @@ if uploaded_img:
     }}
     </style>
     '''
-    components.html(prod_html, height=760, scrolling=True)
+    st.markdown(prod_html, unsafe_allow_html=True)
     
     # --------------------------------------------------------
     # 街拍 Lookbook 輪播（直式）
     # --------------------------------------------------------
+    st.markdown('<div id="lookbook"></div>', unsafe_allow_html=True)
     carousel_imgs = random.sample(streetstyle_files, k=min(9, len(streetstyle_files))) if len(streetstyle_files) >= 3 else list(streetstyle_files)
     columns = [[], [], []]
     for idx, img in enumerate(carousel_imgs):
@@ -589,9 +668,14 @@ if uploaded_img:
         box-shadow: 0 10px 24px rgba(0,0,0,0.08);
         background: #ffffff;
     }}
+    @media (max-width: 768px) {{
+        .look-carousel {{
+            height: 360px;
+        }}
+    }}
     </style>
     '''
-    components.html(carousel_html, height=620)
+    st.markdown(carousel_html, unsafe_allow_html=True)
     
     
 else:
