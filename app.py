@@ -290,7 +290,7 @@ with st.sidebar:
   <a href="https://fashion-demo-assets-lookbook.streamlit.app/">
     <span class="icon">📸</span>街頭穿搭直擊
   </a>
-  <a href="https://fashion-demo-assets-trend_color.streamlit.app/">
+  <a href="https://fashion-demo-assets-trend-color.streamlit.app/">
     <span class="icon">🎨</span>本月流行色系
   </a>
   <a href="https://fashion-demo-assets-project.streamlit.app/">
