@@ -7,6 +7,15 @@ AI Wardrobe｜上傳穿搭照 → AI 辨識顏色 / 品類 → 推薦下身搭�
 此頁面專注在「AI 穿搭靈感推薦」這個主功能，不負責 Landing Page 或專案介紹。
 """
 
+import sys
+import os
+
+# 將專案根路徑加入 Python 搜尋路徑
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
+
+
 import base64
 import random
 import urllib.parse

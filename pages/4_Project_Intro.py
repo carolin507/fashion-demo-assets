@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import os
+
+# 將專案根目錄加入 module 路徑
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+
 import streamlit as st
 
 st.set_page_config(page_title="專案介紹", layout="wide", initial_sidebar_state="collapsed")

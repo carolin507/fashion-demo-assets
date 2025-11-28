@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+import sys
+import os
+
+# 將專案根目錄加入 module 路徑
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import random
 
 import streamlit as st
