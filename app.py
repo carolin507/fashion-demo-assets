@@ -1,4 +1,4 @@
-﻿# app.py
+# app.py
 
 import streamlit as st
 from ui.css import load_global_css
@@ -12,11 +12,30 @@ from pages.project_intro import render_project_intro
 st.set_page_config(page_title="Lookbook Studio", layout="wide")
 
 # Load CSS
-load_global_css()
+st.markdown(load_global_css(), unsafe_allow_html=True)
 
 # Initialize page
 if "page" not in st.session_state:
     st.session_state.page = "wardrobe"
+
+# Sync with URL query param if present (new API first; if not available, fallback)
+allowed_pages = {"wardrobe", "lookbook", "trend", "intro"}
+params = {}
+try:
+    params = st.query_params
+except Exception:
+    try:
+        params = st.experimental_get_query_params()
+    except Exception:
+        params = {}
+
+if "page" in params:
+    value = params["page"]
+    page_val = value[0] if isinstance(value, list) else value
+    if page_val in allowed_pages:
+        st.session_state.page = page_val
+    else:
+        st.session_state.page = "wardrobe"
 
 # Top navigation bar
 render_topnav()

@@ -1,87 +1,53 @@
 # ui/layout.py
 
+
 def card(title, body_html):
-    return f"""
-    <div class="card">
-        <div class="card-title">{title}</div>
-        {body_html}
-    </div>
-    """
+    """Wrap content in a styled card; body is stripped to avoid code blocks."""
+    clean = body_html.strip()
+    return (
+        "<div class=\"card\">"
+        f"<div class=\"card-title\">{title}</div>"
+        f"{clean}"
+        "</div>"
+    )
+
 
 def product_grid(files, base):
     items = "".join(
-        f"""
-        <div style="
-            background:white;
-            padding:12px;
-            border-radius:16px;
-            box-shadow:0 6px 14px rgba(0,0,0,0.05);
-        ">
-            <img src="{base + f}" style="width:100%;border-radius:12px;">
-            <div style="font-size:12px;color:#6a5d52; text-align:center;margin-top:4px;">
-                靈感單品
-            </div>
-        </div>
-        """
+        (
+            "<div class=\"product-card\">"
+            f"<img src=\"{base}{f}\">"
+            "<div class=\"caption\">精選單品</div>"
+            "</div>"
+        )
         for f in files
     )
+    return (
+        "<div class=\"card\">"
+        "<div class=\"card-title\">精選單品推薦</div>"
+        "<div class=\"product-grid\">"
+        f"{items}"
+        "</div>"
+        "</div>"
+    )
 
-    return f"""
-    <div class="card">
-        <div class="card-title">相似單品推薦</div>
-        <div style="
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-            gap:12px;">
-            {items}
-        </div>
-    </div>
-    """
 
 def lookbook_carousel(files, base):
-    slides = "".join(
-        f"""
-        <div class="slide">
-            <img src="{base + f}">
-        </div>
-        """
+    """Static 3-column gallery for consistent sizing."""
+    items = "".join(
+        (
+            "<div class=\"gallery-item\">"
+            f"<img src=\"{base}{f}\" alt=\"street look\">"
+            "<div class=\"caption\"></div>"
+            "</div>"
+        )
         for f in files
     )
-
-    return f"""
-    <div class="card">
-        <div class="card-title">街拍 Lookbook</div>
-        <div class="look-container">
-            {slides}
-        </div>
-    </div>
-
-    <style>
-    .look-container {{
-        height:520px;
-        position:relative;
-        overflow:hidden;
-    }}
-    .slide {{
-        position:absolute;
-        inset:0;
-        opacity:0;
-        animation:fade 12s infinite;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        padding:12px;
-    }}
-    .slide img {{
-        max-width:100%;
-        max-height:100%;
-        border-radius:16px;
-    }}
-    @keyframes fade {{
-        0% {{ opacity:1; }}
-        40% {{ opacity:1; }}
-        50% {{ opacity:0; }}
-        100% {{ opacity:0; }}
-    }}
-    </style>
-    """
+    return (
+        "<div class=\"card\">"
+        "<div class=\"card-title\">街拍 Lookbook</div>"
+        "<div class=\"gallery-grid\">"
+        f"{items}"
+        "</div>"
+        "</div>"
+    )
