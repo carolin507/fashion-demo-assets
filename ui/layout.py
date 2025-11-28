@@ -1,20 +1,5 @@
 # ui/layout.py
 
-def hero_banner(url):
-    return f"""
-    <div class="hero-wrapper">
-        <img src="{url}" class="hero-img" />
-        <div class="hero-overlay">
-            <div class="hero-text">
-                <div class="hero-title">AI 穿搭靈感推薦</div>
-                <div class="hero-sub">上傳穿搭，AI 協助辨識顏色與品類，並推薦下身搭配靈感。</div>
-                <a class="hero-btn" href="#upload">開始體驗</a>
-            </div>
-        </div>
-    </div>
-    """
-
-
 def card(title, body_html):
     return f"""
     <div class="card">
@@ -23,34 +8,80 @@ def card(title, body_html):
     </div>
     """
 
-
-def product_grid(images, base_url):
+def product_grid(files, base):
     items = "".join(
         f"""
-        <div class='prod-card-inline'>
-            <img src='{base_url}{img}'/>
-            <div class='caption'>靈感商品</div>
+        <div style="
+            background:white;
+            padding:12px;
+            border-radius:16px;
+            box-shadow:0 6px 14px rgba(0,0,0,0.05);
+        ">
+            <img src="{base + f}" style="width:100%;border-radius:12px;">
+            <div style="font-size:12px;color:#6a5d52; text-align:center;margin-top:4px;">
+                靈感單品
+            </div>
         </div>
-        """ for img in images
+        """
+        for f in files
     )
 
     return f"""
     <div class="card">
         <div class="card-title">相似單品推薦</div>
-        <div class="product-grid">{items}</div>
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+            gap:12px;">
+            {items}
+        </div>
     </div>
     """
 
-
-def lookbook_carousel(imgs, base):
+def lookbook_carousel(files, base):
     slides = "".join(
-        f"<div class='slide'><img src='{base}{img}'/></div>"
-        for img in imgs
+        f"""
+        <div class="slide">
+            <img src="{base + f}">
+        </div>
+        """
+        for f in files
     )
 
     return f"""
     <div class="card">
-        <div class="card-title">街拍靈感 Lookbook</div>
-        <div class="look-carousel">{slides}</div>
+        <div class="card-title">街拍 Lookbook</div>
+        <div class="look-container">
+            {slides}
+        </div>
     </div>
+
+    <style>
+    .look-container {{
+        height:520px;
+        position:relative;
+        overflow:hidden;
+    }}
+    .slide {{
+        position:absolute;
+        inset:0;
+        opacity:0;
+        animation:fade 12s infinite;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:12px;
+    }}
+    .slide img {{
+        max-width:100%;
+        max-height:100%;
+        border-radius:16px;
+    }}
+    @keyframes fade {{
+        0% {{ opacity:1; }}
+        40% {{ opacity:1; }}
+        50% {{ opacity:0; }}
+        100% {{ opacity:0; }}
+    }}
+    </style>
     """
