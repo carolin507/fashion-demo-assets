@@ -55,6 +55,61 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+with st.sidebar:
+    st.markdown("### Lookbook Studio")
+    st.markdown("""
+<style>
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+}
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f6f2eb;
+    color: #4a362f;
+    text-decoration: none;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    white-space: nowrap;  /* 讓文字不要被切成一直排 */
+}
+.sidebar-nav a:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+.sidebar-nav a .icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+</style>
+
+<div class="sidebar-nav">
+  <a href="https://fashion-demo-assets-1-ai-wardrobe.streamlit.app/">
+    <span class="icon">🌟</span>AI 穿搭靈感推薦
+  </a>
+  <a href="https://fashion-demo-assets-2-street-lookbook.streamlit.app/">
+    <span class="icon">📸</span>街頭穿搭直擊
+  </a>
+  <a href="https://fashion-demo-assets-3-color-trends.streamlit.app/">
+    <span class="icon">🎨</span>本月流行色系
+  </a>
+  <a href="https://fashion-demo-assets-4-project-intro.streamlit.app/">
+    <span class="icon">💡</span>專案介紹
+  </a>
+</div>
+""", unsafe_allow_html=True)
 
 # ------------------------------------------------------------
 # STEP 1｜上傳區（性別 + 圖片）

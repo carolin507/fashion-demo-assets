@@ -78,16 +78,16 @@ with st.sidebar:
 </style>
 
 <div class="sidebar-nav">
-  <a href="https://fashion-demo-assets-homepage.streamlit.app/">
+  <a href="https://fashion-demo-assets-1-ai-wardrobe.streamlit.app/">
     <span class="icon">🌟</span>AI 穿搭靈感推薦
   </a>
-  <a href="https://fashion-demo-assets-lookbook.streamlit.app/">
+  <a href="https://fashion-demo-assets-2-street-lookbook.streamlit.app/">
     <span class="icon">📸</span>街頭穿搭直擊
   </a>
-  <a href="https://fashion-demo-assets-trend-color.streamlit.app/">
+  <a href="https://fashion-demo-assets-3-color-trends.streamlit.app/">
     <span class="icon">🎨</span>本月流行色系
   </a>
-  <a href="https://fashion-demo-assets-project.streamlit.app/">
+  <a href="https://fashion-demo-assets-4-project-intro.streamlit.app/">
     <span class="icon">💡</span>專案介紹
   </a>
 </div>
