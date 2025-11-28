@@ -306,7 +306,8 @@ with st.sidebar:
 # ------------------------------------------------------------
 # Hero Banner - GitHub raw URL
 # ------------------------------------------------------------
-hero_url = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/hero_banner.jpg"
+hero_url = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/hero_banner.jpg"
+
 
 st.markdown(
     f"""
@@ -422,7 +423,8 @@ product_files = [
     "638993433208400000.jpg",
     "638993433310200000.jpg",
 ]
-product_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/product/"
+product_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/product/"
+
 
 streetstyle_files = [
     "20170324095254453_500.jpg",
@@ -446,7 +448,7 @@ streetstyle_files = [
     "20170324103356507_500.jpg",
     "20170324103547162_500.jpg",
 ]
-streetstyle_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/streetstyle/"
+streetstyle_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/streetstyle/"
 
 
 
