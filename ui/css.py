@@ -416,5 +416,11 @@ def load_global_css():
     @media (max-width: 640px) {
         .mini-lookbook-grid { grid-template-columns: 1fr; }
     }
+                  
+    .hero-wrapper {
+        margin-left: calc(-1 * var(--page-pad)) !important;
+        margin-right: calc(-1 * var(--page-pad)) !important;
+        width: calc(100% + 2 * var(--page-pad)) !important;
+    }
         </style>
     """).strip()
