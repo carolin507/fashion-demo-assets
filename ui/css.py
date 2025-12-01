@@ -188,6 +188,12 @@ def load_global_css():
         padding:0 40px;
         color:#FDF8F1;
     }
+    .hero-outer {
+        margin-left: calc(-1 * var(--page-pad)) !important;
+        margin-right: calc(-1 * var(--page-pad)) !important;
+        width: calc(100% + 2 * var(--page-pad)) !important;
+    }
+
 
     .hero-title { font-family:'Noto Serif TC'; font-size:30px; font-weight:700; margin-bottom:6px; }
     .hero-sub { font-size:14px; opacity:0.92; }
@@ -422,5 +428,15 @@ def load_global_css():
         margin-right: calc(-1 * var(--page-pad)) !important;
         width: calc(100% + 2 * var(--page-pad)) !important;
     }
+    .hero-wrapper {
+        position: relative;
+        width: 100%;
+        height: 360px;
+        overflow: hidden;
+
+        border-radius: 18px; /* ← 真正的圓角應該放這裡 */
+        box-shadow: var(--shadow-soft);
+    }
+
         </style>
     """).strip()

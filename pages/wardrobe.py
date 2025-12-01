@@ -45,17 +45,20 @@ def render_wardrobe():
     # 1. Hero Banner
     # ------------------------------------------------------------
     st.markdown(dedent("""
-    <div class="hero-wrapper">
-        <img class="hero-img"
-             src="https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/hero_banner.jpg">
-        <div class="hero-overlay">
-            <div>
-                <div class="hero-title">AI 穿搭靈感推薦</div>
-                <div class="hero-sub">上傳穿搭，AI 幫你分析主色、花紋與品類</div>
+        <div class="hero-outer">
+            <div class="hero-wrapper">
+                <img class="hero-img"
+                    src="https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/hero_banner.jpg">
+                <div class="hero-overlay">
+                    <div>
+                        <div class="hero-title">AI 穿搭靈感推薦</div>
+                        <div class="hero-sub">上傳穿搭，AI 幫你分析主色、花紋與品類</div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    """).strip(), unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
+
 
     # ------------------------------------------------------------
     # 說明卡
