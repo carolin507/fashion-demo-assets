@@ -42,20 +42,6 @@ st.markdown("""
 }
 .topnav .stButton>button:hover { box-shadow: 0 12px 24px rgba(255, 181, 204, 0.45); }
 
-.hero-wrapper {
-    width: calc(100% + (var(--page-pad) * 2));
-    margin-left: calc(-1 * var(--page-pad));
-    height: 420px;
-}
-.hero-overlay {
-    background: linear-gradient(90deg, rgba(0,0,0,0.50), rgba(0,0,0,0.12), transparent);
-}
-@media (max-width: 768px) {
-    .hero-wrapper {
-        width: 100vw;
-        margin-left: calc(-1 * (50vw - 50%));
-        height: 260px;
-    }
 }
 
 .gallery-grid {
