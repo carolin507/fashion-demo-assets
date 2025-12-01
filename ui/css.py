@@ -103,13 +103,17 @@ def load_global_css():
     /* hero banner (full-bleed) */
     .hero-wrapper {
         position: relative;
-        width: 100%;
-        max-width: 100%;
-        margin: 0 0 18px 0;
-        height:360px;
-        overflow:hidden;
-        border-radius:14px;
-        box-shadow: var(--shadow-soft);
+        width: calc(100vw);   /* 滿版 */
+        margin-left: calc(-1 * var(--page-pad));  
+        margin-right: calc(-1 * var(--page-pad)); 
+        margin-top: 0;
+        margin-bottom: 18px;
+
+        height: 360px;
+        overflow: hidden;
+
+        border-radius: 0;  /* full-bleed 通常不保留圓角，可以保留也行 */
+        box-shadow: none;  /* 可依需求 */
     }
     .hero-img {
         width:100%;
