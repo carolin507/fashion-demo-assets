@@ -6,7 +6,7 @@ from ui.topnav import render_topnav
 
 from pages.wardrobe import render_wardrobe
 from pages.lookbook import render_lookbook
-from pages.color_trends import render_color_trends
+from pages.dashboard import render_color_trends
 from pages.project_intro import render_project_intro
 
 st.set_page_config(page_title="Lookbook Studio", layout="wide")
@@ -24,7 +24,7 @@ if "page" not in st.session_state:
     st.session_state.page = "wardrobe"
 
 # Sync with URL query param if present (new API first; if not available, fallback)
-allowed_pages = {"wardrobe", "lookbook", "trend", "intro"}
+allowed_pages = {"wardrobe", "lookbook", "dashboard", "intro"}
 params = {}
 try:
     params = st.query_params
@@ -52,7 +52,7 @@ if page == "wardrobe":
     render_wardrobe()
 elif page == "lookbook":
     render_lookbook()
-elif page == "trend":
+elif page == "dashboard":
     render_color_trends()
 elif page == "intro":
     render_project_intro()

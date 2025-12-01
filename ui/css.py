@@ -266,44 +266,44 @@ def load_global_css():
         border:1px dashed rgba(0,0,0,0.15);
     }
 
-            /* trend color chips */
-    .trend-row .stButton>button {
+                    /* trend color chips */
+    .stButton>button[aria-label^="pair_"] {
         width:100%;
         height:150px;
         border-radius:10px;
-        border:1px solid rgba(0,0,0,0.15);
-        box-shadow:0 10px 24px rgba(0,0,0,0.08);
+        border:1px solid rgba(0,0,0,0.18) !important;
+        box-shadow:0 10px 24px rgba(0,0,0,0.08) !important;
         font-weight:700;
         font-size:0 !important;
         color:transparent !important;
-        padding:0;
+        padding:0 !important;
         text-align:center;
         display:block;
         letter-spacing:0;
         background:linear-gradient(180deg, var(--chip-top, #ddd) 58%, var(--chip-bottom, #fff) 58%) !important;
-        transition:transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+        transition:transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease !important;
         position:relative;
         overflow:hidden;
         text-shadow:none !important;
         line-height:0 !important;
     }
-    .trend-row .stButton>button * {
+    .stButton>button[aria-label^="pair_"] * {
         font-size:0 !important;
         line-height:0 !important;
         color:transparent !important;
         text-shadow:none !important;
     }
-    .trend-row .stButton>button:hover {
+    .stButton>button[aria-label^="pair_"]:hover {
         transform:translateY(-2px);
-        box-shadow:0 14px 28px rgba(0,0,0,0.12);
-        border-color:rgba(0,0,0,0.28);
+        box-shadow:0 14px 28px rgba(0,0,0,0.12) !important;
+        border-color:rgba(0,0,0,0.28) !important;
     }
-    .trend-row .stButton>button[aria-label="pair_bw"] { --chip-top:#2b2b2b; --chip-bottom:#f6f6f6; }
-    .trend-row .stButton>button[aria-label="pair_bg"] { --chip-top:#3f68b5; --chip-bottom:#5e8c6a; }
-    .trend-row .stButton>button[aria-label="pair_mg"] { --chip-top:#e9dcc6; --chip-bottom:#5e8c6a; }
-    .trend-row .stButton>button[aria-label="pair_br"] { --chip-top:#2b2b2b; --chip-bottom:#d95555; }
-    .trend-row .stButton>button[aria-label="pair_cb"] { --chip-top:#7a5537; --chip-bottom:#3f68b5; }
-    .trend-row .stButton>button[aria-label="pair_gb"] { --chip-top:#7d7d7d; --chip-bottom:#7aa2c4; }
+    .stButton>button[aria-label="pair_bw"] { --chip-top:#2b2b2b; --chip-bottom:#f6f6f6; }
+    .stButton>button[aria-label="pair_bg"] { --chip-top:#3f68b5; --chip-bottom:#5e8c6a; }
+    .stButton>button[aria-label="pair_mg"] { --chip-top:#e9dcc6; --chip-bottom:#5e8c6a; }
+    .stButton>button[aria-label="pair_br"] { --chip-top:#2b2b2b; --chip-bottom:#d95555; }
+    .stButton>button[aria-label="pair_cb"] { --chip-top:#7a5537; --chip-bottom:#3f68b5; }
+    .stButton>button[aria-label="pair_gb"] { --chip-top:#7d7d7d; --chip-bottom:#7aa2c4; }
 
 /* product grid */
     .product-grid {

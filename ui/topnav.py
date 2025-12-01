@@ -4,7 +4,7 @@ def render_topnav():
     labels = [
         ("AI 穿搭示範", "wardrobe"),
         ("街拍靈感", "lookbook"),
-        ("本月流行色系", "trend"),
+        ("商業趨勢分析", "dashboard"),
         ("專案介紹", "intro"),
     ]
 
