@@ -102,18 +102,11 @@ def load_global_css():
 
     /* hero banner (full-bleed) */
     .hero-wrapper {
-        position: relative;
-        width: calc(100vw);   /* 滿版 */
-        margin-left: calc(-1 * var(--page-pad));  
-        margin-right: calc(-1 * var(--page-pad)); 
-        margin-top: 0;
-        margin-bottom: 18px;
-
+        width: 100%;
         height: 360px;
         overflow: hidden;
-
-        border-radius: 0;  /* full-bleed 通常不保留圓角，可以保留也行 */
-        box-shadow: none;  /* 可依需求 */
+        border-radius: 14px;
+        margin-bottom: 18px;
     }
     .hero-img {
         width:100%;
@@ -130,6 +123,7 @@ def load_global_css():
         padding:0 40px;
         color:#FDF8F1;
     }
+
     .hero-title { font-family:'Noto Serif TC'; font-size:30px; font-weight:700; margin-bottom:6px; }
     .hero-sub { font-size:14px; opacity:0.92; }
     .hero-btn {
