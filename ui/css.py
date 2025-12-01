@@ -266,31 +266,46 @@ def load_global_css():
         border:1px dashed rgba(0,0,0,0.15);
     }
 
-    /* trend color chips */
-    .trend-row .stButton>button,
-    .stButton>button[aria-label="黑色"],
-    .stButton>button[aria-label="白色"],
-    .stButton>button[aria-label="米色"],
-    .stButton>button[aria-label="藍色"],
-    .stButton>button[aria-label="綠色"],
-    .stButton>button[aria-label="紅色"] {
+            /* trend color chips */
+    .trend-row .stButton>button {
         width:100%;
-        height:120px;
-        border-radius:14px;
-        border:1px solid rgba(0,0,0,0.08);
-        box-shadow:0 8px 18px rgba(0,0,0,0.08);
+        height:150px;
+        border-radius:10px;
+        border:1px solid rgba(0,0,0,0.15);
+        box-shadow:0 10px 24px rgba(0,0,0,0.08);
         font-weight:700;
-        font-size:14px;
-        color:#3b2d27;
+        font-size:0 !important;
+        color:transparent !important;
+        padding:0;
+        text-align:center;
+        display:block;
+        letter-spacing:0;
+        background:linear-gradient(180deg, var(--chip-top, #ddd) 58%, var(--chip-bottom, #fff) 58%) !important;
+        transition:transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+        position:relative;
+        overflow:hidden;
+        text-shadow:none !important;
+        line-height:0 !important;
     }
-    .stButton>button[aria-label="黑色"] { background:#2b2b2b; color:#ffffff; }
-    .stButton>button[aria-label="白色"] { background:#f6f6f6; color:#3b2d27; }
-    .stButton>button[aria-label="米色"] { background:#e9dcc6; color:#3b2d27; }
-    .stButton>button[aria-label="藍色"] { background:#3f68b5; color:#ffffff; }
-    .stButton>button[aria-label="綠色"] { background:#5e8c6a; color:#ffffff; }
-    .stButton>button[aria-label="紅色"] { background:#d95555; color:#ffffff; }
+    .trend-row .stButton>button * {
+        font-size:0 !important;
+        line-height:0 !important;
+        color:transparent !important;
+        text-shadow:none !important;
+    }
+    .trend-row .stButton>button:hover {
+        transform:translateY(-2px);
+        box-shadow:0 14px 28px rgba(0,0,0,0.12);
+        border-color:rgba(0,0,0,0.28);
+    }
+    .trend-row .stButton>button[aria-label="pair_bw"] { --chip-top:#2b2b2b; --chip-bottom:#f6f6f6; }
+    .trend-row .stButton>button[aria-label="pair_bg"] { --chip-top:#3f68b5; --chip-bottom:#5e8c6a; }
+    .trend-row .stButton>button[aria-label="pair_mg"] { --chip-top:#e9dcc6; --chip-bottom:#5e8c6a; }
+    .trend-row .stButton>button[aria-label="pair_br"] { --chip-top:#2b2b2b; --chip-bottom:#d95555; }
+    .trend-row .stButton>button[aria-label="pair_cb"] { --chip-top:#7a5537; --chip-bottom:#3f68b5; }
+    .trend-row .stButton>button[aria-label="pair_gb"] { --chip-top:#7d7d7d; --chip-bottom:#7aa2c4; }
 
-    /* product grid */
+/* product grid */
     .product-grid {
         display:grid;
         grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -342,8 +357,9 @@ def load_global_css():
     }
     .gallery-item img {
         width:100%;
-        height:260px;
-        object-fit:cover;
+        height:auto;
+        max-height:480px;
+        object-fit:contain;
         border-radius:10px;
         display:block;
     }
