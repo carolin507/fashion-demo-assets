@@ -14,7 +14,7 @@ from textwrap import dedent
 import streamlit as st
 from PIL import Image
 
-from ui.layout import card, product_grid, lookbook_carousel
+from ui.layout import card, product_grid
 from modules.inference import predict_labels
 from modules.recommend import recommend_bottom
 from modules.utils import (
@@ -183,30 +183,6 @@ def render_wardrobe():
             random.sample(product_files, min(4, len(product_files))),
             product_base
         ), unsafe_allow_html=True)
-
-        # STEP 5｜Lookbook 輪播
-        streetstyle_files = [
-            "20170324095254453_500.jpg",
-            "20170324095730988_500.jpg",
-            "20170324100124006_500.jpg",
-            "20170324100303683_500.jpg",
-            "20170324101207506_500.jpg",
-            "20170324101213181_500.jpg",
-            "20170324101342210_500.jpg",
-            "20170324101553293_500.jpg",
-            "20170324101642714_500.jpg",
-        ]
-        streetstyle_base = (
-            "https://raw.githubusercontent.com/carolin507/"
-            "fashion-demo-assets/main/assets/streetstyle/"
-        )
-        lookbook_files = random.sample(
-            streetstyle_files, min(9, len(streetstyle_files))
-        )
-        st.markdown(
-            lookbook_carousel(lookbook_files, streetstyle_base),
-            unsafe_allow_html=True
-        )
 
     # 尚未上傳：提示
     else:

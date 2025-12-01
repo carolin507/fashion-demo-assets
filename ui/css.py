@@ -39,50 +39,107 @@ def load_global_css():
         margin-top: 0 !important;
     }
 
-    /* top nav */
-    .topnav {
+    /* top nav built with Streamlit columns */
+    /* =============================== */
+/*          TOP NAVBAR            */
+/* =============================== */
+
+/* 抓 Streamlit Columns 外層容器 */
+    div[data-testid="stHorizontalBlock"]:has(.topnav-left.brand) {
         position: sticky;
         top: 0;
         z-index: 999;
-        background: linear-gradient(120deg, #fefbf8, #f4e9dc);
-        padding: 12px 16px;
-        border-bottom: 1px solid #eadfce;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 8px 22px rgba(0,0,0,0.05);
-    }
-    .topnav .brand {
-        font-family:'Noto Serif TC';
-        font-size:23px;
-        font-weight:700;
-        color:#3b2d27;
-        letter-spacing:0.5px;
-    }
-    .topnav .nav-group { display:flex; gap:12px; }
-    .topnav .stButton>button {
-        padding:10px 16px;
-        border-radius:999px;
-        border:1px solid rgba(58,44,33,0.06);
-        color:#3b2d27;
-        background:linear-gradient(120deg, #fdf7f0, #f3e7da);
-        box-shadow:0 6px 15px rgba(0,0,0,0.05);
-        font-weight:600;
-        transition:transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
-    }
-    .topnav [data-testid="baseButton-secondary"] {
-        background:linear-gradient(120deg, #f9f2e9, #f4ebe0);
-        color:#5b4a3f;
-    }
-    .topnav [data-testid="baseButton-primary"] {
-        background:linear-gradient(120deg, #eabf9c, #e08fa2);
-        color:#3a241e;
-        box-shadow:0 8px 18px rgba(224,156,164,0.35);
-        border:1px solid rgba(224,156,164,0.35);
-    }
-    .topnav .stButton>button:hover { transform:translateY(-1px); box-shadow:0 9px 18px rgba(0,0,0,0.08); }
-    .topnav .stButton>button:active { transform:translateY(0); box-shadow:0 5px 12px rgba(0,0,0,0.05); }
 
+        width: 100%;
+        padding: 12px 20px;
+        margin: 0 calc(-1 * var(--page-pad)) 0;   /* ⬅ 移除底部空白（避免底色） */
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        /* ⬅⬅ 背景改為全站主背景色 */
+        background: var(--bg-main) !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* 左右 cols 的 padding 修正 */
+    div[data-testid="stHorizontalBlock"]:has(.topnav-left.brand) > div[data-testid="column"] {
+        padding: 0 !important;
+    }
+
+    /* ------------------------------- */
+    /*            左側品牌             */
+    /* ------------------------------- */
+
+    .topnav-left.brand,
+    .topnav-left.brand * {
+        font-family: 'Noto Serif TC', serif !important;
+        font-size: 30px !important;
+        font-weight: 700 !important;
+        color: #3b2d27 !important;
+        line-height: 1.2 !important;
+        margin: 0;
+        padding: 0;
+        white-space: nowrap;
+    }
+
+    /* ------------------------------- */
+    /*           右側按鈕群            */
+    /* ------------------------------- */
+
+    .topnav-right {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    /* 所有按鈕基礎樣式 */
+    .topnav-right .stButton > button {
+        padding: 10px 18px !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(0,0,0,0.06) !important;
+
+        font-size: 15px;
+        font-weight: 600;
+        color: #3b2d27 !important;
+
+        background: linear-gradient(120deg, #fdf7f0, #f3e7da) !important;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.05) !important;
+
+        transition: transform .15s ease,
+                    box-shadow .15s ease,
+                    background .15s ease;
+    }
+
+    /* 次要按鈕（未選中） */
+    .topnav-right [data-testid="baseButton-secondary"] {
+        background: linear-gradient(120deg, #fbeff4, #f4e3ea) !important;
+        color: #6c4a53 !important;
+        border-color: rgba(0,0,0,0) !important;
+        box-shadow: none !important;
+    }
+
+    /* 主要按鈕（當前頁） */
+    .topnav-right [data-testid="baseButton-primary"] {
+        background: linear-gradient(120deg, #eabf9c, #e08fa2) !important;
+        color: #3a241e !important;
+        border-color: rgba(224,156,164,0.35) !important;
+        box-shadow: 0 8px 18px rgba(224,156,164,0.35) !important;
+    }
+
+    /* hover / active 效果 */
+    .topnav-right .stButton > button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 9px 18px rgba(0,0,0,0.08) !important;
+    }
+    .topnav-right .stButton > button:active {
+        transform: translateY(0);
+        box-shadow: 0 5px 12px rgba(0,0,0,0.05) !important;
+    }
+
+    
     /* cards */
     .card {
         background: var(--card-bg);
@@ -102,12 +159,17 @@ def load_global_css():
 
     /* hero banner (full-bleed) */
     .hero-wrapper {
+        position: relative;
         width: 100%;
         height: 360px;
         overflow: hidden;
+
         border-radius: 14px;
-        margin-bottom: 18px;
+        margin: 0 0 18px 0;
+
+        box-shadow: var(--shadow-soft);
     }
+
     .hero-img {
         width:100%;
         height:100%;
@@ -288,5 +350,68 @@ def load_global_css():
         .hero-title { font-size:24px; }
         .look-carousel { height: 360px; }
     }
-    </style>
+                  
+
+    /* ========================================= */
+    /*   Wardrobe mini Lookbook: 3~4 slots auto carousel   */
+    /* ========================================= */
+
+
+    .mini-lookbook-grid {
+        display: grid;
+        grid-template-columns: repeat(var(--slot-count, 3), minmax(0, 1fr));
+        gap: 18px;
+        margin: 12px 0 24px;
+    }
+
+    .mini-lookbook-slot {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        overflow: hidden;
+        border-radius: 16px;
+        background: linear-gradient(160deg, #fdf7f0, #f1e6da);
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        isolation: isolate;
+        --frame: 4s;
+    }
+
+    .mini-lookbook-img {
+        position: absolute;
+        inset: 10px;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        object-fit: contain;
+        object-position: center;
+        background: #f8f3ec;
+        border-radius: 12px;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+        opacity: 0;
+        animation: fadeCycle calc(var(--img-count, 1) * var(--frame, 4s)) ease-in-out infinite both;
+        animation-delay: calc(-1 * var(--i, 0) * var(--frame, 4s));
+    }
+
+    .fade-img { pointer-events: none; }
+
+    .mini-lookbook-img.first-img {
+        opacity: 1;
+        animation-delay: 0s;
+    }
+
+    @keyframes fadeCycle {
+        0%   { opacity: 0; }
+        12%  { opacity: 1; }
+        70%  { opacity: 1; }
+        85%  { opacity: 0; }
+        100% { opacity: 0; }
+    }
+
+    @media (max-width: 1024px) {
+        .mini-lookbook-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+        .mini-lookbook-grid { grid-template-columns: 1fr; }
+    }
+        </style>
     """).strip()
