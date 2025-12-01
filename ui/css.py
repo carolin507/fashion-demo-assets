@@ -51,7 +51,7 @@ def load_global_css():
         z-index: 999;
 
         width: 100%;
-        padding: 12px 20px;
+        padding: 12px var(--page-pad);
         margin: 0 calc(-1 * var(--page-pad)) 0;   /* ⬅ 移除底部空白（避免底色） */
 
         display: flex;
