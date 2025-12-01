@@ -112,7 +112,7 @@ def render_color_trends():
 
     st.markdown(card(
         "色彩搭配表現 (上/下身組合)",
-        "" + pair_df.to_markdown(index=False) + ""
+        pair_df.to_html(index=False, escape=False)
     ), unsafe_allow_html=True)
 
     st.markdown(card(
@@ -130,5 +130,5 @@ def render_color_trends():
 
     st.markdown(card(
         "原始明細 (demo 資料)",
-        "" + pd.DataFrame(filtered).to_markdown(index=False) + ""
+        pd.DataFrame(filtered).to_html(index=False, escape=False)
     ), unsafe_allow_html=True)
