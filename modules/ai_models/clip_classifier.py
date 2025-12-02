@@ -48,7 +48,6 @@ CATEGORY_LABELS = [
     "Pants",
     "Jeans",
     "Jumpsuit",
-    "Kimono_Yukata",
     "Sweater",
 ]
 

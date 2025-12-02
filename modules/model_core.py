@@ -20,7 +20,7 @@ model_core.py
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, Optional
 from PIL import Image
 import pandas as pd
 
@@ -38,8 +38,12 @@ from modules.cooccurrence_recommender import (
 #    ※ 未來要換模型，只要改這一行
 # ============================================================
 
-_fashion_model = ClipClassifier()   # ← 換模型只要改這裡！
-
+try:
+    _fashion_model = ClipClassifier()   # ← 換模型只要改這裡！
+    print("[model_core] ClipClassifier 已成功載入")
+except Exception as e:
+    print(f"[model_core][ERROR] ClipClassifier 載入失敗: {e}")
+    _fashion_model = None
 
 # ============================================================
 # 2) 圖片 → labels（顏色 / 花紋 / 類別 / 上下身）
@@ -69,7 +73,7 @@ def infer_labels(image: Image.Image) -> Dict[str, str]:
 
 def infer_and_recommend(
     image: Image.Image,
-    recommender: CoOccurrenceRecommender,
+    recommender: Optional[CoOccurrenceRecommender],
     k: int = 3,
 ) -> Dict:
     """
@@ -77,34 +81,62 @@ def infer_and_recommend(
     1) 用 AI 模型做影像辨識
     2) 根據 part 決定推薦方向（Top→Bottom 或 Bottom→Top）
 
-    回傳格式：
-    {
-        "input_label": {
-            "color": ...,
-            "style": ...,
-            "category": ...,
-            "part": ...
-        },
-        "direction": "Top_to_Bottom" | "Bottom_to_Top",
-        "recommendations": [ {...}, {...}, ... ]   # list 長度 ≤ k
-    }
+    強化版功能：
+    - 若模型尚未載入 → 回傳空結果
+    - 若推薦器不存在 → 回傳空推薦結果
+    - 若 labels 缺少欄位 → 不會 crash（自動防呆）
     """
-    labels = _fashion_model.analyze(image)
+
+    # ===============================
+    # 1. 影像辨識
+    # ===============================
+    labels = infer_labels(image)
+
+    # 若辨識失敗（None）→ 回傳空推薦
+    if labels.get("color") is None:
+        return {
+            "input_label": labels,
+            "direction": None,
+            "recommendations": []
+        }
 
     item = {
-        "color": labels["color"],
-        "style": labels["style"],
-        "category": labels["category"],
+        "color": labels.get("color"),
+        "style": labels.get("style"),
+        "category": labels.get("category")
     }
 
-    # ---- 根據 part 決定推薦方向 ----
-    if labels["part"] == "Top":
-        recs = recommender.recommend_from_top(item, k=k)
-        direction = "Top_to_Bottom"
-    else:
-        recs = recommender.recommend_from_bottom(item, k=k)
-        direction = "Bottom_to_Top"
+    # ===============================
+    # 2. 檢查推薦器是否存在
+    # ===============================
+    if recommender is None:
+        print("[model_core][WARN] recommender is None → 跳過推薦階段")
+        return {
+            "input_label": labels,
+            "direction": None,
+            "recommendations": []
+        }
 
+    # ===============================
+    # 3. 根據 part 決定推薦方向
+    # ===============================
+    part = labels.get("part")
+
+    try:
+        if part == "Top":
+            recs = recommender.recommend_from_top(item, k=k)
+            direction = "Top_to_Bottom"
+        else:
+            recs = recommender.recommend_from_bottom(item, k=k)
+            direction = "Bottom_to_Top"
+    except Exception as e:
+        print(f"[model_core][ERROR] 推薦器產生推薦失敗: {e}")
+        recs = []
+        direction = None
+
+    # ===============================
+    # 4. 結果回傳
+    # ===============================
     return {
         "input_label": labels,
         "direction": direction,
@@ -117,9 +149,13 @@ def infer_and_recommend(
 #    ※ 這部分我保留簡化版，供推薦系統初始化使用
 # ============================================================
 
+
 def build_recommender_from_pairs(df_pairs: pd.DataFrame) -> CoOccurrenceRecommender:
     """
-    給主程式或 dashboard 使用：
     用 top-bottom pair 資料建立共現推薦器。
     """
-    return CoOccurrenceRecommender(df_pairs)
+    try:
+        return CoOccurrenceRecommender(df_pairs)
+    except Exception as e:
+        print(f"[model_core][ERROR] 無法建立推薦器: {e}")
+        return None

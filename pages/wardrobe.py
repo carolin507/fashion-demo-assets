@@ -15,8 +15,8 @@ import streamlit as st
 from PIL import Image
 
 from ui.layout import card, product_grid
-from modules.inference import predict_labels
-from modules.recommend import recommend_bottom
+from modules.model_core import infer_labels, infer_and_recommend
+from modules.cooccurrence_recommender import CoOccurrenceRecommender
 from modules.utils import (
     zh_label, color_to_zh, pattern_to_zh, category_to_zh
 )
@@ -38,7 +38,7 @@ COLOR_HEX = {
 LIGHT_COLORS = {"White", "Beige", "Yellow", "Pink", "Orange"}
 
 
-def render_wardrobe():
+def render_wardrobe(recommender: CoOccurrenceRecommender):
     """主渲染函式"""
 
     # ------------------------------------------------------------
@@ -101,7 +101,23 @@ def render_wardrobe():
         img.save(buf, format="PNG")
         img_b64 = base64.b64encode(buf.getvalue()).decode()
 
-        result = predict_labels(img, gender)
+        # -------------------------
+        # ⭐ 正式版 AI 推論（ClipClassifier）
+        # -------------------------
+        labels = infer_labels(img)
+        # 樣式統一（UI 用）
+        color_label = labels["color"]
+        style_label = labels["style"]
+        category_label = labels["category"]
+
+
+
+        # -------------------------
+        # ⭐ 正式版推薦（共現推薦器）
+        # -------------------------
+        rec_result = infer_and_recommend(img, recommender)
+        recommendations = rec_result["recommendations"]
+
 
         # STEP 2｜辨識結果
         col1, col2 = st.columns([1.1, 0.9])
@@ -114,61 +130,61 @@ def render_wardrobe():
 
         with col2:
             st.markdown(card(
-                "AI 辨識結果（Demo 模式）",
+                "AI 辨識結果（正式 AI 模型）",
                 dedent(f"""
-                <p><strong>顏色：</strong>{zh_label(result['color'], color_to_zh)}</p>
-                <p><strong>花紋：</strong>{zh_label(result['pattern'], pattern_to_zh)}</p>
-                <p><strong>品類：</strong>{zh_label(result['category'], category_to_zh)}</p>
+                <p><strong>顏色：</strong>{zh_label(color_label, color_to_zh)}</p>
+                <p><strong>花紋：</strong>{zh_label(style_label, pattern_to_zh)}</p>
+                <p><strong>品類：</strong>{zh_label(category_label, category_to_zh)}</p>
                 <p class="subtle">
-                    ※ 模型邏輯位於 <code>modules/inference.py</code>
+                    ※ 由 ClipClassifier（modules/ai_models/clip_classifier.py） 驅動
                 </p>
                 """).strip()
             ), unsafe_allow_html=True)
 
-        # STEP 3｜搭配建議
-        rec = recommend_bottom(
-            color=result["color"],
-            category=result["category"],
-            gender=gender
-        )
+        # ------------------------------------------------------------
+        # STEP 3｜搭配建議（新版共現推薦）
+        # ------------------------------------------------------------
+        if len(recommendations) > 0:
+            top_rec = recommendations[0]  # 取第一名
 
-        color_tags_html = "".join(
-            f"<span class='color-tag' style=\"background:{COLOR_HEX.get(c, '#888')};"
-            f"color:{'#2f241e' if c in LIGHT_COLORS else '#ffffff'};\">"
-            f"{zh_label(c, color_to_zh)}</span>"
-            for c in rec["bottom_color"]
-        )
-        cat_tags_html = " ".join(
-            f"<span class='tag'>{cat}</span>"
-            for cat in rec["bottom_category"]
-        )
-        recommended_color = rec["bottom_color"][0]
-        recommended_cat = rec["bottom_category"][0]
-        query = f"{zh_label(recommended_color, color_to_zh)} {recommended_cat}"
-        google_url = "https://www.google.com/search?tbm=shop&q=" + urllib.parse.quote(query)
+            rec_color = top_rec.get("color", "")
+            rec_cat = top_rec.get("category", "")
 
-        st.markdown(card(
-            "STEP 2｜AI 建議的下身搭配方向",
-            dedent(f"""
-            <p class="subtle">
-              規則由 <code>modules/recommend.py</code> 提供，可替換成資料計算邏輯。
-            </p>
+            color_tags_html = f"""
+            <span class='color-tag' style="background:{COLOR_HEX.get(rec_color, '#888')};
+            color:{'#2f241e' if rec_color in LIGHT_COLORS else '#ffffff'};">
+                {zh_label(rec_color, color_to_zh)}
+            </span>
+            """
 
-            <div class="tag-row">
-              <div class="tag-label">建議顏色：</div>
-              {color_tags_html}
-            </div>
-            <div class="tag-row">
-              <div class="tag-label">建議類別：</div>
-              {cat_tags_html}
-            </div>
+            cat_tags_html = f"<span class='tag'>{rec_cat}</span>"
 
-            <a href="{google_url}" target="_blank"
-               class="hero-btn" style="margin-top:14px;display:inline-block;">
-               前往 Google 購物查看相近單品
-            </a>
-            """).strip()
-        ), unsafe_allow_html=True)
+            query = f"{zh_label(rec_color, color_to_zh)} {rec_cat}"
+            google_url = "https://www.google.com/search?tbm=shop&q=" + urllib.parse.quote(query)
+
+            st.markdown(card(
+                "STEP 2｜AI 建議的下身搭配方向（正式推薦）",
+                dedent(f"""
+                <p class="subtle">
+                  由 <code>cooccurrence_recommender.py</code> 提供真實共現推薦結果。
+                </p>
+
+                <div class="tag-row">
+                  <div class="tag-label">建議顏色：</div>
+                  {color_tags_html}
+                </div>
+                <div class="tag-row">
+                  <div class="tag-label">建議類別：</div>
+                  {cat_tags_html}
+                </div>
+
+                <a href="{google_url}" target="_blank"
+                   class="hero-btn" style="margin-top:14px;display:inline-block;">
+                   前往 Google 購物查看相近單品
+                </a>
+                """).strip()
+            ), unsafe_allow_html=True)
+
 
         # STEP 4｜相似單品
         product_files = [
