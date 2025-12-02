@@ -14,23 +14,33 @@ from pages.project_intro import render_project_intro
 import pandas as pd
 from modules.model_core import build_recommender_from_pairs
 from pages.wardrobe import render_wardrobe
+import ast
+
 
 # ------------------------------------------------------------
 # 讀取穿搭共現資料集，並建立推薦器
 # ------------------------------------------------------------
 @st.cache_resource
+
 def load_recommender():
+    file_path = "data/pairs_from_vlabels.csv" 
+
     try:
-        df_pairs = pd.read_csv("data/dummy_pairs_50_v2.csv")
-    except:
-        st.error("找不到 data/dummy_pairs_50_v2.csv，請確認路徑是否正確。")
+        df_pairs = pd.read_csv(
+            file_path,
+            converters={
+                "top": ast.literal_eval,
+                "bottom": ast.literal_eval,
+            }
+        )
+    except Exception as e:
+        st.error(f"⚠️ 無法讀取推薦資料集：{file_path}\n{e}")
         return None
 
     recommender = build_recommender_from_pairs(df_pairs)
     return recommender
 
 RECOMMENDER = load_recommender()
-
 
 
 # Load CSS

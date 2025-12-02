@@ -2,11 +2,10 @@
 
 """
 AI Wardrobe：上傳穿搭照 → AI 辨識顏色 / 品類 → 推薦下身搭配與靈感。
-僅負責內容渲染，路由由 app.py 控制。
+新版：整合 model_core.infer_labels / infer_and_recommend
 """
 
 import base64
-import random
 import urllib.parse
 from io import BytesIO
 from textwrap import dedent
@@ -16,10 +15,8 @@ from PIL import Image
 
 from ui.layout import card, product_grid
 from modules.model_core import infer_labels, infer_and_recommend
-from modules.cooccurrence_recommender import CoOccurrenceRecommender
-from modules.utils import (
-    zh_label, color_to_zh, pattern_to_zh, category_to_zh
-)
+from modules.utils import zh_label, color_to_zh, pattern_to_zh, category_to_zh
+
 
 COLOR_HEX = {
     "Black": "#2b2b2b",
@@ -38,17 +35,17 @@ COLOR_HEX = {
 LIGHT_COLORS = {"White", "Beige", "Yellow", "Pink", "Orange"}
 
 
-def render_wardrobe(recommender: CoOccurrenceRecommender):
-    """主渲染函式"""
+def render_wardrobe(recommender):
+    """主渲染函式（新版：使用推薦器）"""
 
     # ------------------------------------------------------------
-    # 1. Hero Banner
+    # Hero Banner
     # ------------------------------------------------------------
     st.markdown(dedent("""
         <div class="hero-outer">
             <div class="hero-wrapper">
                 <img class="hero-img"
-                    src="https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/hero_banner.jpg">
+                     src="https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/hero_banner.jpg">
                 <div class="hero-overlay">
                     <div>
                         <div class="hero-title">AI 穿搭靈感推薦</div>
@@ -59,134 +56,119 @@ def render_wardrobe(recommender: CoOccurrenceRecommender):
         </div>
     """), unsafe_allow_html=True)
 
-
-    # ------------------------------------------------------------
-    # 說明卡
-    # ------------------------------------------------------------
+    # Intro card
     st.markdown(card(
         "AI 穿搭靈感推薦｜AI Wardrobe",
         dedent("""
         <p class="subtle">
-            上傳一張日常穿搭照，AI 會辨識主色 / 花紋 / 服飾品類，
-            並推薦下身搭配方向，再延伸相似單品與街拍 Lookbook。
+            上傳一張穿搭照，AI 會辨識主色 / 花紋 / 服飾品類，
+            並推薦下身搭配方向，再延伸相似單品與 Lookbook。
         </p>
-        """).strip()
+        """)
     ), unsafe_allow_html=True)
 
     # ------------------------------------------------------------
-    # STEP 1
+    # STEP 1 — 上傳圖片
     # ------------------------------------------------------------
     st.markdown(card(
         "STEP 1｜上傳你的穿搭照",
         "<p class='subtle'>選擇性別並上傳穿搭圖片。</p>"
     ), unsafe_allow_html=True)
 
-    col_u1, col_u2 = st.columns([1, 2])
-    with col_u1:
+    col_left, col_right = st.columns([1, 2])
+    with col_left:
         gender = st.selectbox("性別", ["female", "male", "unisex"])
-        cloth_part = st.selectbox("上衣 / 下著", ["上衣", "下著"])
 
-    with col_u2:
+    with col_right:
         uploaded_img = st.file_uploader(
-            "上傳穿搭圖片（支援 JPG / JPEG / PNG）",
+            "上傳穿搭圖片（JPG / PNG）",
             type=["jpg", "jpeg", "png"]
         )
 
     # ------------------------------------------------------------
-    # 若已上傳圖 → 流程
+    # 若已上傳 → 開始推論
     # ------------------------------------------------------------
     if uploaded_img:
         img = Image.open(uploaded_img)
-        buf = BytesIO()
-        img.save(buf, format="PNG")
-        img_b64 = base64.b64encode(buf.getvalue()).decode()
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        img_b64 = base64.b64encode(buffer.getvalue()).decode()
 
-        # -------------------------
-        # ⭐ 正式版 AI 推論（ClipClassifier）
-        # -------------------------
+        # ====== 1) AI 標籤推論 ======
         labels = infer_labels(img)
-        # 樣式統一（UI 用）
+
         color_label = labels["color"]
         style_label = labels["style"]
-        category_label = labels["category"]
+        cat_label = labels["category"]
+        part = labels["part"]
 
-
-
-        # -------------------------
-        # ⭐ 正式版推薦（共現推薦器）
-        # -------------------------
+        # ====== 2) AI 推薦 ======
         rec_result = infer_and_recommend(img, recommender)
         recommendations = rec_result["recommendations"]
 
-
-        # STEP 2｜辨識結果
-        col1, col2 = st.columns([1.1, 0.9])
-        with col1:
-            photo_html = f"""
-<img src="data:image/png;base64,{img_b64}"
-     class="uploaded-photo" />
-            """
-            st.markdown(card("你的穿搭照片", photo_html), unsafe_allow_html=True)
-
-        with col2:
+        # --------------------------------------------------------
+        # STEP 2 — 顯示上傳圖片 + 推論標籤
+        # --------------------------------------------------------
+        c1, c2 = st.columns([1.1, 0.9])
+        with c1:
             st.markdown(card(
-                "AI 辨識結果（正式 AI 模型）",
+                "你的穿搭照片",
+                f"""<img src="data:image/png;base64,{img_b64}" class="uploaded-photo"/>"""
+            ), unsafe_allow_html=True)
+
+        with c2:
+            st.markdown(card(
+                "AI 辨識結果（正式模型）",
                 dedent(f"""
                 <p><strong>顏色：</strong>{zh_label(color_label, color_to_zh)}</p>
                 <p><strong>花紋：</strong>{zh_label(style_label, pattern_to_zh)}</p>
-                <p><strong>品類：</strong>{zh_label(category_label, category_to_zh)}</p>
-                <p class="subtle">
-                    ※ 由 ClipClassifier（modules/ai_models/clip_classifier.py） 驅動
-                </p>
-                """).strip()
+                <p><strong>品類：</strong>{zh_label(cat_label, category_to_zh)}</p>
+                <p><strong>部位：</strong>{part}</p>
+                """)
             ), unsafe_allow_html=True)
 
-        # ------------------------------------------------------------
-        # STEP 3｜搭配建議（新版共現推薦）
-        # ------------------------------------------------------------
-        if len(recommendations) > 0:
-            top_rec = recommendations[0]  # 取第一名
+        # --------------------------------------------------------
+        # STEP 3 — 正式推薦區塊（不會再破版）
+        # --------------------------------------------------------
+        if recommendations:
+            top_rec = recommendations[0]
+            rec_color = top_rec["color"]
+            rec_style = top_rec["style"]
+            rec_cat = top_rec["category"]
 
-            rec_color = top_rec.get("color", "")
-            rec_cat = top_rec.get("category", "")
-
-            color_tags_html = f"""
-            <span class='color-tag' style="background:{COLOR_HEX.get(rec_color, '#888')};
-            color:{'#2f241e' if rec_color in LIGHT_COLORS else '#ffffff'};">
-                {zh_label(rec_color, color_to_zh)}
-            </span>
-            """
-
-            cat_tags_html = f"<span class='tag'>{rec_cat}</span>"
-
-            query = f"{zh_label(rec_color, color_to_zh)} {rec_cat}"
+            query = f"{zh_label(rec_color, color_to_zh)} {zh_label(rec_cat, category_to_zh)}"
             google_url = "https://www.google.com/search?tbm=shop&q=" + urllib.parse.quote(query)
 
             st.markdown(card(
                 "STEP 2｜AI 建議的下身搭配方向（正式推薦）",
                 dedent(f"""
                 <p class="subtle">
-                  由 <code>cooccurrence_recommender.py</code> 提供真實共現推薦結果。
+                    由 <code>cooccurrence_recommender.py</code> 產生真實共現推薦結果。
                 </p>
 
                 <div class="tag-row">
-                  <div class="tag-label">建議顏色：</div>
-                  {color_tags_html}
-                </div>
-                <div class="tag-row">
-                  <div class="tag-label">建議類別：</div>
-                  {cat_tags_html}
+                    <div class="tag-label">建議顏色：</div>
+                    <span class="color-tag" style="background:{COLOR_HEX.get(rec_color,'#888')};
+                        color:{'#2f241e' if rec_color in LIGHT_COLORS else '#fff'};">
+                        {zh_label(rec_color, color_to_zh)}
+                    </span>
                 </div>
 
-                <a href="{google_url}" target="_blank"
-                   class="hero-btn" style="margin-top:14px;display:inline-block;">
-                   前往 Google 購物查看相近單品
+                <div class="tag-row">
+                    <div class="tag-label">建議類別：</div>
+                    <span class="tag">{zh_label(rec_cat, category_to_zh)}</span>
+                </div>
+
+                <a href="{google_url}" target="_blank" class="hero-btn">
+                    前往 Google 購物查看相近單品
                 </a>
-                """).strip()
+                """)
             ), unsafe_allow_html=True)
 
 
-        # STEP 4｜相似單品
+        # --------------------------------------------------------
+        # STEP 4 — 精選單品（UI 完整）
+        # --------------------------------------------------------
         product_files = [
             "638992503203300000.jpg",
             "638993154193030000.jpg",
@@ -198,18 +180,11 @@ def render_wardrobe(recommender: CoOccurrenceRecommender):
             "https://raw.githubusercontent.com/carolin507/"
             "fashion-demo-assets/main/assets/product/"
         )
-        st.markdown(product_grid(
-            random.sample(product_files, min(4, len(product_files))),
-            product_base
-        ), unsafe_allow_html=True)
 
-    # 尚未上傳：提示
+        st.markdown(product_grid(product_files, product_base), unsafe_allow_html=True)
+
     else:
         st.markdown(card(
             "準備開始體驗 AI 穿搭靈感了嗎？",
-            dedent("""
-            <p class="subtle">
-              上傳一張穿搭照，示範「穿搭 → 標籤 → 搭配 → 商品靈感」的 AI Flow。
-            </p>
-            """).strip()
+            "<p class='subtle'>上傳穿搭照即可示範完整 AI Flow。</p>"
         ), unsafe_allow_html=True)
