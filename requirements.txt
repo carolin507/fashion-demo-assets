@@ -1,16 +1,13 @@
+torch==2.0.1+cpu
+torchvision==0.15.2+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 streamlit
 pandas
 numpy
 Pillow
 requests
 scikit-learn
-
-# 🔥 CPU-only PyTorch for Streamlit Cloud
-torch==2.0.1+cpu
-torchvision==0.15.2+cpu
---extra-index-url https://download.pytorch.org/whl/cpu
-
-# CLIP 依賴
 ftfy
 regex
 tqdm
