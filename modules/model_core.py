@@ -4,59 +4,42 @@
 """
 model_core.py
 
-這是「AI 模組的 orchestrator / 控制中心」。
-
-負責：
-1. 呼叫影像分析模型（目前預設使用 CLIP → ClipClassifier）
-2. 呼叫共現推薦系統（CoOccurrenceRecommender）
-3. 對外提供兩個主要 API：
-    - infer_labels(image) → 圖片分析（不含推薦）
-    - infer_and_recommend(image, recommender) → 圖片分析 + 推薦
-
-架構採 plugin 設計：
-未來只要把 ClipClassifier 換成 YOLOSegmentor / EPyNetModel，
-前端與推薦系統都不需要跟著改。
+新版功能：
+1. 提供統一介面給前端（wardrobe.py）
+2. 整合：
+    - AI image classifier（可替換：CLIP / YOLO / etc.）
+    - GenderedRecommender（共現 + 機率式混合推薦器）
+3. 提供兩個核心 API：
+    - infer_labels(image)                     → 影像推論
+    - infer_and_recommend(image, gender, K)  → 影像推論 + 推薦
 """
 
 from __future__ import annotations
-
-from typing import Dict, Optional
+from typing import Dict
 from PIL import Image
-import pandas as pd
 
-# ---- AI 模型（可替換：CLIP / YOLO / EPYNET ...） ----
-from modules.ai_models.clip_classifier import ClipClassifier
-
-# ---- 推薦系統（你們的共現模組） ----
-from modules.cooccurrence_recommender import (
-    CoOccurrenceRecommender,
-)
-
-
-# ============================================================
-# 1) 目前使用的 AI 模型（ClipClassifier）
-#    ※ 未來要換模型，只要改這一行
-# ============================================================
-
+# === 影像 AI 模型（未來可更換） ===
 try:
-    _fashion_model = ClipClassifier()   # ← 換模型只要改這裡！
+    from modules.ai_models.clip_classifier import ClipClassifier
+    _fashion_model = ClipClassifier()
     print("[model_core] ClipClassifier 已成功載入")
 except Exception as e:
-    print(f"[model_core][ERROR] ClipClassifier 載入失敗: {e}")
+    print(f"[model_core][WARN] ClipClassifier 載入失敗：{e}")
     _fashion_model = None
 
+# === 新版推薦器 ===
+from modules.recommender_pair import GenderedRecommender
+
+
 # ============================================================
-# 2) 圖片 → labels（顏色 / 花紋 / 類別 / 上下身）
+# 1) 影像辨識 API（你們前端會呼叫這個）
 # ============================================================
 
 def infer_labels(image: Image.Image) -> Dict[str, str]:
     """
-    給前端與 inference.py 使用的標準入口：
+    統一的影像分析入口。
 
-    輸入：
-        PIL.Image
-
-    回傳：
+    回傳格式：
     {
         "color": <str>,
         "style": <str>,
@@ -64,98 +47,78 @@ def infer_labels(image: Image.Image) -> Dict[str, str]:
         "part": "Top" | "Bottom"
     }
     """
-    return _fashion_model.analyze(image)
+
+    if _fashion_model is None:
+        # 若沒有模型 → 用 placeholder（不讓前端壞掉）
+        return {
+            "color": "White",
+            "style": "Solid",
+            "category": "Shirt",
+            "part": "Top"
+        }
+
+    try:
+        return _fashion_model.analyze(image)
+    except Exception as e:
+        print("[model_core][ERROR] analyze failed:", e)
+        return {
+            "color": None,
+            "style": None,
+            "category": None,
+            "part": None,
+        }
 
 
 # ============================================================
-# 3) 推薦系統：整合「影像辨識 + 共現推薦」
+# 2) 主功能：影像分析 + 共現推薦（新推薦器）
 # ============================================================
 
 def infer_and_recommend(
     image: Image.Image,
-    recommender: Optional[CoOccurrenceRecommender],
+    recommender: GenderedRecommender,
+    gender: str,
     k: int = 3,
 ) -> Dict:
     """
-    一次完成：
-    1) 用 AI 模型做影像辨識
-    2) 根據 part 決定推薦方向（Top→Bottom 或 Bottom→Top）
+    image → AI labels → 推薦器 → K 個推薦結果
 
-    強化版功能：
-    - 若模型尚未載入 → 回傳空結果
-    - 若推薦器不存在 → 回傳空推薦結果
-    - 若 labels 缺少欄位 → 不會 crash（自動防呆）
+    回傳：
+    {
+        "input_label": {...},
+        "recommendations": [ item1, item2, item3 ]
+    }
     """
 
-    # ===============================
-    # 1. 影像辨識
-    # ===============================
+    # ---- Step 1：影像辨識 ----
     labels = infer_labels(image)
 
-    # 若辨識失敗（None）→ 回傳空推薦
     if labels.get("color") is None:
+        # 若 model 載入失敗不 crash
         return {
             "input_label": labels,
-            "direction": None,
             "recommendations": []
         }
 
+    # ---- Step 2：將辨識結果轉為推薦器的 item 格式 ----
     item = {
-        "color": labels.get("color"),
-        "style": labels.get("style"),
-        "category": labels.get("category")
+        "color": labels["color"],
+        "style": labels["style"],
+        "category": labels["category"],
+        "part": labels["part"],  # Top or Bottom
     }
 
-    # ===============================
-    # 2. 檢查推薦器是否存在
-    # ===============================
-    if recommender is None:
-        print("[model_core][WARN] recommender is None → 跳過推薦階段")
-        return {
-            "input_label": labels,
-            "direction": None,
-            "recommendations": []
-        }
-
-    # ===============================
-    # 3. 根據 part 決定推薦方向
-    # ===============================
-    part = labels.get("part")
-
+    # ---- Step 3：性別推薦器 ----
     try:
-        if part == "Top":
-            recs = recommender.recommend_from_top(item, k=k)
-            direction = "Top_to_Bottom"
-        else:
-            recs = recommender.recommend_from_bottom(item, k=k)
-            direction = "Bottom_to_Top"
+        recs = recommender.recommend(
+            item,
+            gender=gender,
+            K=k
+        )
     except Exception as e:
-        print(f"[model_core][ERROR] 推薦器產生推薦失敗: {e}")
+        print("[model_core][ERROR] recommend failed:", e)
         recs = []
-        direction = None
 
-    # ===============================
-    # 4. 結果回傳
-    # ===============================
     return {
         "input_label": labels,
-        "direction": direction,
-        "recommendations": recs,
+        "recommendations": recs
     }
-
-
-# ============================================================
-# 4) RichWear → pair dataset（預留給你們後處理）
-#    ※ 這部分我保留簡化版，供推薦系統初始化使用
-# ============================================================
-
-
-def build_recommender_from_pairs(df_pairs: pd.DataFrame) -> CoOccurrenceRecommender:
-    """
-    用 top-bottom pair 資料建立共現推薦器。
-    """
-    try:
-        return CoOccurrenceRecommender(df_pairs)
-    except Exception as e:
-        print(f"[model_core][ERROR] 無法建立推薦器: {e}")
-        return None

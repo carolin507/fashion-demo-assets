@@ -26,7 +26,7 @@ def predict_labels(image: Image.Image, gender: str):
 
     輸入：
         - image: PIL.Image
-        - gender: "female" | "male" | "unisex"
+        - gender: "female" | "male"
 
     輸出格式（100% 與前端一致）：
     {
