@@ -22,6 +22,7 @@ from pages.wardrobe import render_wardrobe
 from pages.lookbook import render_lookbook
 from pages.dashboard import render_color_trends
 from pages.project_intro import render_project_intro
+from pages.dashboard_crm import render_crm_dashboard
 
 # ------------------------------------------------------------
 # Recommender (New Architecture)
@@ -79,7 +80,7 @@ if "page" not in st.session_state:
 # ------------------------------------------------------------
 # Sync URL param → page routing
 # ------------------------------------------------------------
-allowed_pages = {"wardrobe", "lookbook", "dashboard", "intro"}
+allowed_pages = {"wardrobe", "lookbook", "dashboard", "crm", "intro"}
 
 try:
     params = st.query_params  # 新版 API
@@ -115,3 +116,6 @@ elif page == "dashboard":
 
 elif page == "intro":
     render_project_intro()
+
+elif page == "crm":
+     render_crm_dashboard()
