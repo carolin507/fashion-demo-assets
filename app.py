@@ -20,9 +20,12 @@ from ui.topnav import render_topnav
 # ------------------------------------------------------------
 from pages.wardrobe import render_wardrobe
 from pages.lookbook import render_lookbook
-from pages.dashboard import render_color_trends
+from pages.dashboard_trend_analysis import render_color_trends
 from pages.project_intro import render_project_intro
 from pages.dashboard_crm import render_crm_dashboard
+from pages.dashboard_sales import render_sales_dashboard
+from pages.dashboard_reviews import render_reviews_dashboard
+
 
 # ------------------------------------------------------------
 # Recommender (New Architecture)
@@ -80,7 +83,7 @@ if "page" not in st.session_state:
 # ------------------------------------------------------------
 # Sync URL param → page routing
 # ------------------------------------------------------------
-allowed_pages = {"wardrobe", "lookbook", "dashboard", "crm", "intro"}
+allowed_pages = {"wardrobe", "lookbook", "dashboard", "crm", "sales","reviews" , "intro"}
 
 try:
     params = st.query_params  # 新版 API
@@ -119,3 +122,11 @@ elif page == "intro":
 
 elif page == "crm":
      render_crm_dashboard()
+     
+elif page == "sales":
+    render_sales_dashboard()
+
+elif page == "reviews":
+    render_reviews_dashboard()
+
+

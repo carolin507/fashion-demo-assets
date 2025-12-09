@@ -1,23 +1,24 @@
 import streamlit as st
 
+
 def render_topnav():
     labels = [
-        ("AI 穿搭示範", "wardrobe"),
-        ("街拍靈感", "lookbook"),
-        ("商業趨勢分析", "dashboard"),
+        ("AI 穿搭推薦", "wardrobe"),
+        ("穿搭靈感牆", "lookbook"),
+        ("色彩潮流分析", "dashboard"),
+        ("CRM 客戶洞察", "crm"),
+        ("銷售分析", "sales"),
+        ("顧客評價分析", "reviews"),
         ("專案介紹", "intro"),
     ]
 
     current = st.session_state.get("page", "wardrobe")
 
-    # --- 左右欄位 ---
     nav_left, nav_right = st.columns([1.2, 3], vertical_alignment="center")
 
-    # --- 左側品牌 ---
     with nav_left:
         st.markdown('<div class="topnav-left brand">Lookbook Studio</div>', unsafe_allow_html=True)
 
-    # --- 右側按鈕（加入 topnav-right wrapper） ---
     with nav_right:
         st.markdown('<div class="topnav-right">', unsafe_allow_html=True)
 
@@ -35,7 +36,7 @@ def render_topnav():
                     st.session_state.page = target
                     try:
                         st.query_params = {"page": target}
-                    except:
+                    except Exception:
                         st.experimental_set_query_params(page=target)
                     st.rerun()
 

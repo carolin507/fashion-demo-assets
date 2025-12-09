@@ -216,12 +216,20 @@ def render_wardrobe(RECOMMENDER: GenderedRecommender):
 
     
     cards = []
+    BASE_URL = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/streetstyle/"
 
     for rec in recommendations[:3]:
         color = rec.get("color")
         style = rec.get("style")
         cat = rec.get("category")
-        url = rec.get("image_url") or rec.get("top_url") or rec.get("bottom_url") or ""
+        raw_url = (
+        rec.get("image_url")
+        or rec.get("top_url")
+        or rec.get("bottom_url")
+        or rec.get("filename")
+        or ""
+    )
+        url = BASE_URL + raw_url if raw_url else ""
 
         cards.append(dedent(f'''<div class="rec-card">
     <img src="{url}" class="rec-img"/>
