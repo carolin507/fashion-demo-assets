@@ -334,3 +334,17 @@ def render_crm_dashboard():
         )
     else:
         st.info("缺少 RFM 欄位，無法顯示樣本表格。")
+
+    st.markdown("---")
+    st.markdown(
+        """
+        **資料集來源**
+
+        ③ European Fashion Store Multi-table（SQL + 會員模型）  
+        🔗 https://www.kaggle.com/datasets/joycemara/european-fashion-store-multitable-dataset  
+        📌 用途：會員分析、RFM、購買頻率、地區比較  
+        - 有多張 table（customers、products、transactions 等）  
+        - 最適合展示 JOIN、Window function、Segmentation  
+        - 呈現「CRM 與商業決策能力」
+        """
+    )

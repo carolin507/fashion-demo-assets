@@ -303,3 +303,17 @@ def render_sales_dashboard():
     )
     st.plotly_chart(fig_weekday, use_container_width=True)
     _insight_box("Insight", insights.get("weekday", []))
+
+    st.markdown("---")
+    st.markdown(
+        """
+        **資料集來源**
+
+        ② Women Clothing E-commerce Sales（銷售分析）  
+        🔗 https://www.kaggle.com/datasets/shilongzhuang/-women-clothing-ecommerce-sales-data  
+        📌 用途：銷售趨勢、品類銷售、價格分析、Top seller  
+        - 真實電商銷售欄位（category、price、quantity）  
+        - 可以做 GMV、AOV、銷售趨勢、季節性分析  
+        - 最能展示「商業 KPI 分析」能力
+        """
+    )

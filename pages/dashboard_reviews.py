@@ -302,6 +302,18 @@ def render_reviews_dashboard():
         st.markdown("##### 負面最新 5 筆")
         _review_cards(negative_reviews, "Negative", "#EF4444")
 
+    st.markdown("---")
+    st.markdown(
+        """
+        **資料集來源**
+
+        ① Women’s E-commerce Clothing Reviews（NLP + 聲量）  
+        🔗 https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews  
+        📌 用途：顧客評論、情緒分析、產品缺點洞察、NLP  
+        - 能呈現「客戶之聲 VOC」分析能力
+        """
+    )
+
 
 # Alias for legacy import
 def render_color_trends():
