@@ -218,8 +218,8 @@ def render_project_intro():
                   </div>
                   <div class="lookbook-carousel">
                     <img src="{base}/170464439-56930532-6d7b-4649-b009-09eebfa5a75b.png" alt="street style 1">
-                    <img src="{base}/grid-print-new-york-fashion-week.png" alt="street style 2">
-                    <img src="{base}/AI穿搭推薦.png" alt="street style 3">
+                    <img src="{base}/7776aec2089baec3783e19ac6f7f2c9a.jpg" alt="street style 2">
+                    <img src="{base}/Screen-Shot-2018-06-07-at-10.14.28.png" alt="street style 3">
                   </div>
                 </div>
               </section>
@@ -337,7 +337,7 @@ def render_project_intro():
                   <a class="btn-primary" href="?page=wardrobe">預約 Demo / 索取 PoC</a>
                 </div>
                 <div class="cta-img">
-                  <img src="{base}/AI穿搭推薦2_251210.png" alt="lookbook studio preview">
+                  <img src="{base}/AI穿搭推薦_251210_part.png" alt="lookbook studio preview">
                 </div>
               </section>
             </div>
