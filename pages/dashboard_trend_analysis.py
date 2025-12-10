@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from modules.analytics.insights.sales_insights import _fmt_pct
+WARM = ["#FF5A5F", "#F97316", "#E9C46A", "#F4A261", "#FB7185", "#F59E0B"]
 
 
 @st.cache_data
@@ -50,6 +51,8 @@ def render_trend_analysis():
     SAND = "#F9F5F0"
     INK = "#1C1917"
     MUTED = "#78716C"
+    px.defaults.color_discrete_sequence = WARM
+    px.defaults.color_continuous_scale = "OrRd"
 
     st.markdown(
         f"""

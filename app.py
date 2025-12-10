@@ -77,7 +77,7 @@ st.markdown("""
 # Initialize session state
 # ------------------------------------------------------------
 if "page" not in st.session_state:
-    st.session_state.page = "wardrobe"
+    st.session_state.page = "intro"
 
 
 # ------------------------------------------------------------

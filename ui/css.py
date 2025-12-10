@@ -52,16 +52,18 @@ def load_global_css():
 
         width: 100%;
         padding: 12px var(--page-pad);
-        margin: 0 calc(-1 * var(--page-pad)) 0;   /* ⬅ 移除底部空白（避免底色） */
+        margin: 0 calc(-1 * var(--page-pad)) 4px;   /* ⬅ 移除底部空白（避免底色） */
 
         display: flex;
         align-items: center;
         justify-content: space-between;
 
         /* ⬅⬅ 背景改為全站主背景色 */
-        background: var(--bg-main) !important;
-        border: none !important;
-        box-shadow: none !important;
+        background: linear-gradient(140deg, rgba(255,255,255,0.95), rgba(246,240,232,0.94)) !important;
+        border: 1px solid rgba(0,0,0,0.04) !important;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.08) !important;
+        border-radius: 18px;
+        backdrop-filter: blur(8px);
     }
 
     /* 左右 cols 的 padding 修正 */
@@ -76,7 +78,7 @@ def load_global_css():
     .topnav-left.brand,
     .topnav-left.brand * {
         font-family: 'Noto Serif TC', serif !important;
-        font-size: 30px !important;
+        font-size: 28px !important;
         font-weight: 700 !important;
         color: #3b2d27 !important;
         line-height: 1.2 !important;
@@ -92,41 +94,43 @@ def load_global_css():
     .topnav-right {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 16px;
     }
 
     /* 所有按鈕基礎樣式 */
     .topnav-right .stButton > button {
         padding: 10px 18px !important;
-        border-radius: 999px !important;
-        border: 1px solid rgba(0,0,0,0.06) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(59,45,39,0.12) !important;
 
         font-size: 15px;
         font-weight: 600;
-        color: #3b2d27 !important;
+        letter-spacing: 0.01em;
+        color: #2e2520 !important;
 
-        background: linear-gradient(120deg, #fdf7f0, #f3e7da) !important;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.05) !important;
+        background: #ffffffd8 !important;
+        box-shadow: 0 8px 18px rgba(0,0,0,0.06) !important;
 
         transition: transform .15s ease,
                     box-shadow .15s ease,
-                    background .15s ease;
+                    background .15s ease,
+                    border-color .15s ease;
     }
 
     /* 次要按鈕（未選中） */
     .topnav-right [data-testid="baseButton-secondary"] {
-        background: linear-gradient(120deg, #fbeff4, #f4e3ea) !important;
-        color: #6c4a53 !important;
-        border-color: rgba(0,0,0,0) !important;
+        background: #f5f0e8 !important;
+        color: #5d4b40 !important;
+        border-color: rgba(59,45,39,0.08) !important;
         box-shadow: none !important;
     }
 
     /* 主要按鈕（當前頁） */
     .topnav-right [data-testid="baseButton-primary"] {
-        background: linear-gradient(120deg, #eabf9c, #e08fa2) !important;
-        color: #3a241e !important;
-        border-color: rgba(224,156,164,0.35) !important;
-        box-shadow: 0 8px 18px rgba(224,156,164,0.35) !important;
+        background: linear-gradient(135deg, #2f2b33, #3f3845) !important;
+        color: #ffffff !important;
+        border-color: rgba(47,43,51,0.6) !important;
+        box-shadow: 0 10px 22px rgba(47,43,51,0.35) !important;
     }
 
     /* hover / active 效果 */
@@ -137,6 +141,55 @@ def load_global_css():
     .topnav-right .stButton > button:active {
         transform: translateY(0);
         box-shadow: 0 5px 12px rgba(0,0,0,0.05) !important;
+    }
+
+    /* BI sub-nav pills */
+    .topnav-subnav {
+        margin: 2px 0 18px;
+        padding: 10px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        border-top: 1px solid rgba(0,0,0,0.04);
+    }
+    .topnav-subtitle {
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #6f6055;
+        font-weight: 700;
+        margin-right: 6px;
+    }
+    .topnav-pill-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .topnav-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 14px;
+        border-radius: 12px;
+        background: #ffffff;
+        border: 1px solid rgba(59,45,39,0.12);
+        color: #3b2d27;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+        transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .topnav-pill:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+    .topnav-pill.active {
+        background: linear-gradient(135deg, #2f2b33, #3f3845);
+        color: #ffffff;
+        border-color: rgba(47,43,51,0.6);
+        box-shadow: 0 10px 22px rgba(47,43,51,0.28);
     }
 
     

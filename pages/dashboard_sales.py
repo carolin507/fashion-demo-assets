@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from modules.analytics.insights.sales_insights import generate_sales_insights
+WARM = ["#FF5A5F", "#F97316", "#E9C46A", "#F4A261", "#FB7185", "#F59E0B"]
 
 
 @st.cache_data
@@ -26,6 +27,8 @@ def render_sales_dashboard():
     SAND = "#F9F5F0"
     INK = "#1C1917"
     MUTED = "#78716C"
+    px.defaults.color_discrete_sequence = WARM
+    px.defaults.color_continuous_scale = "OrRd"
 
     st.markdown(
         f"""

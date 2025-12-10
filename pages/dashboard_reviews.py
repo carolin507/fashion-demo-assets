@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from modules.analytics.insights.review_insights import generate_review_insights
+WARM = ["#FF5A5F", "#F97316", "#E9C46A", "#F4A261", "#FB7185", "#F59E0B"]
 
 
 @st.cache_data
@@ -18,6 +19,8 @@ def render_reviews_dashboard():
     SAND = "#F9F5F0"
     INK = "#1C1917"
     MUTED = "#78716C"
+    px.defaults.color_discrete_sequence = WARM
+    px.defaults.color_continuous_scale = "OrRd"
 
     st.markdown(
         f"""

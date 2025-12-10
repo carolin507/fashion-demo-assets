@@ -11,6 +11,7 @@ ACCENT = "#FF5A5F"
 SAND = "#F9F5F0"
 INK = "#1C1917"
 MUTED = "#78716C"
+WARM = ["#FF5A5F", "#F97316", "#E9C46A", "#F4A261", "#FB7185", "#F59E0B"]
 
 
 @st.cache_data
@@ -50,6 +51,8 @@ def render_crm_dashboard():
     """CRM & 客戶洞察 Dashboard，版型取自 React App.tsx。"""
     rfm, sales_full = load_crm_data()
     insights = generate_crm_insights(rfm, sales_full)
+    px.defaults.color_discrete_sequence = WARM
+    px.defaults.color_continuous_scale = "OrRd"
 
     st.markdown(
         f"""

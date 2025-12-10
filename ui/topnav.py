@@ -2,17 +2,21 @@ import streamlit as st
 
 
 def render_topnav():
-    labels = [
-        ("AI 穿搭推薦", "wardrobe"),
-        ("穿搭靈感牆", "lookbook"),
-        ("色彩潮流分析", "dashboard"),
-        ("CRM 客戶洞察", "crm"),
-        ("銷售分析", "sales"),
-        ("顧客評價分析", "reviews"),
-        ("專案介紹", "intro"),
+    menu = [
+        {"label": "解決方案", "target": "intro"},
+        {"label": "AI穿搭Showroom", "target": "wardrobe"},
+        {
+            "label": "商業洞察BI方案",
+            "children": [
+                ("色彩潮流趨勢", "dashboard"),
+                ("即時銷售分析", "sales"),
+                ("CRM客戶洞察", "crm"),
+                ("顧客評價分析", "reviews"),
+            ],
+        },
     ]
 
-    current = st.session_state.get("page", "wardrobe")
+    current = st.session_state.get("page", "intro")
 
     nav_left, nav_right = st.columns([1.2, 3], vertical_alignment="center")
 
@@ -22,22 +26,50 @@ def render_topnav():
     with nav_right:
         st.markdown('<div class="topnav-right">', unsafe_allow_html=True)
 
-        btn_cols = st.columns(len(labels), gap="small")
+        btn_cols = st.columns(len(menu), gap="small")
 
-        for (text, target), col in zip(labels, btn_cols):
+        for item, col in zip(menu, btn_cols):
             with col:
+                target = item.get("target")
+                children = item.get("children", [])
+                child_targets = {child_target for _, child_target in children}
+                is_active = (target and current == target) or (children and current in child_targets)
+                default_target = target or (children[0][1] if children else None)
+
                 clicked = st.button(
-                    text,
-                    key=f"nav_{target}",
-                    type="primary" if current == target else "secondary",
+                    item["label"],
+                    key=f"nav_{item['label']}",
+                    type="primary" if is_active else "secondary",
                     use_container_width=True,
                 )
-                if clicked:
-                    st.session_state.page = target
+                if clicked and default_target:
+                    st.session_state.page = default_target
                     try:
-                        st.query_params = {"page": target}
+                        st.query_params = {"page": default_target}
                     except Exception:
-                        st.experimental_set_query_params(page=target)
+                        st.experimental_set_query_params(page=default_target)
                     st.rerun()
 
         st.markdown("</div>", unsafe_allow_html=True)
+
+    bi_children = next((item.get("children", []) for item in menu if "children" in item), [])
+
+    if bi_children:
+        sub_links = []
+        for text, target in bi_children:
+            active_class = " active" if current == target else ""
+            sub_links.append(f'<a class="topnav-pill{active_class}" href="?page={target}">{text}</a>')
+
+        st.markdown(
+            """
+            <div class="topnav-subnav">
+                <div class="topnav-subtitle">商業洞察 BI 方案</div>
+                <div class="topnav-pill-row">
+            """
+            + "".join(sub_links)
+            + """
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
