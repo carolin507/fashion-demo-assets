@@ -8,62 +8,62 @@ def render_project_intro():
     """Product-style landing page for Lookbook Studio."""
 
     base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/intro"
-    street_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/streetstyle"
+    info_base = "https://raw.githubusercontent.com/carolin507/fashion-demo-assets/main/assets/info"
+
     st.markdown(
         dedent(
             """
             <style>
-            :root { --bg-main:#f8f6f2; --card-bg:#ffffff; }
-            .intro-shell { display:flex; flex-direction:column; gap:32px; }
-            .intro-section { background:var(--card-bg); border-radius:20px; padding:28px 28px 26px;
-                             box-shadow:0 12px 30px rgba(55,80,140,0.08); border:1px solid rgba(0,0,0,0.03); }
-            .hero-intro { position:relative; overflow:hidden; border-radius:22px; min-height:360px;
-                          color:#f7f9ff; box-shadow:0 18px 40px rgba(55,80,140,0.16); }
+            .intro-shell { display:flex; flex-direction:column; gap:28px; }
+            .intro-section { background:var(--card-bg); border-radius:18px; padding:24px 24px 22px;
+                             box-shadow:0 10px 28px rgba(120,70,40,0.08); border:1px solid rgba(0,0,0,0.03); }
+            .hero-intro { position:relative; overflow:hidden; border-radius:20px; min-height:360px;
+                          color:#fff7f0; box-shadow:0 16px 38px rgba(120,70,40,0.18); }
             .hero-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-            .hero-mask { position:absolute; inset:0; background:linear-gradient(115deg, rgba(0,0,0,0.6), rgba(0,0,0,0.25)); }
-            .hero-content { position:relative; z-index:1; padding:42px; max-width:760px; display:flex; flex-direction:column; gap:16px; color:#f7f9ff; }
-            .eyebrow { display:inline-flex; gap:8px; align-items:center; background:rgba(255,255,255,0.78);
-                       padding:8px 14px; border-radius:999px; font-weight:700; letter-spacing:0.4px; color:#25315b; }
-            .hero-title { font-family:'Noto Serif TC', serif; font-size:36px; margin:0; line-height:1.2; color:#f7f9ff; }
-            .hero-sub { font-size:15px; opacity:0.98; line-height:1.8; color:#f4f7ff; }
+            .hero-mask { position:absolute; inset:0; background:linear-gradient(115deg, rgba(70,38,20,0.65), rgba(255,210,176,0.35)); }
+            .hero-content { position:relative; z-index:1; padding:38px; max-width:720px; display:flex; flex-direction:column; gap:14px; color:#fff7f0; }
+            .eyebrow { display:inline-flex; gap:8px; align-items:center; background:rgba(255,233,212,0.85);
+                       padding:8px 14px; border-radius:999px; font-weight:700; letter-spacing:0.4px; color:#422418; }
+            .hero-title { font-family:'Noto Serif TC', serif; font-size:34px; margin:0; line-height:1.2; color:#fff7f0; }
+            .hero-sub { font-size:15px; opacity:0.98; line-height:1.7; color:#fff7f0; }
             .hero-cta { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
-            .btn-primary { display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:999px;
-                           background:linear-gradient(120deg, #ffb7a3, #ff9f9a); color:#3b2423; font-weight:800;
-                           text-decoration:none; box-shadow:0 14px 30px rgba(120,60,60,0.18); }
+            .btn-primary { display:inline-flex; align-items:center; gap:8px; padding:12px 18px; border-radius:999px;
+                           background:linear-gradient(120deg, #ffd8a8, #f7a97c); color:#402316; font-weight:800;
+                           text-decoration:none; box-shadow:0 12px 28px rgba(120,70,40,0.16); }
             .btn-secondary { display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px;
-                             background:linear-gradient(120deg, #f4f1ed, #ebe7e3); color:#3c3432; font-weight:700;
-                             border:1px solid rgba(80,70,70,0.18); text-decoration:none; box-shadow:0 8px 18px rgba(90,70,70,0.10); }
-            .btn-mini { padding:6px 10px; font-size:12px; box-shadow:0 6px 12px rgba(90,70,70,0.10); }
+                             background:linear-gradient(120deg, #fff3e6, #ffe6d4); color:#4a2c22; font-weight:700;
+                             border:1px solid rgba(120,70,40,0.15); text-decoration:none; box-shadow:0 8px 18px rgba(120,70,40,0.08); }
+            .btn-mini { padding:6px 10px; font-size:12px; box-shadow:0 6px 12px rgba(120,70,40,0.08); }
             .btn-secondary:hover, .btn-primary:hover { transform:translateY(-1px); }
-            .hero-note { font-size:13px; opacity:0.95; color:#e7ecff; }
+            .hero-note { font-size:13px; opacity:0.95; color:#ffeede; }
             .pill-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); }
-            .pill { padding:14px 16px; border-radius:14px; background:linear-gradient(140deg, #f5f7ff, #fbf9ff); border:1px solid rgba(0,0,0,0.04); box-shadow:0 8px 20px rgba(45,90,180,0.06); }
-            .pill strong { display:block; font-size:15px; margin-bottom:6px; color:#2e2a48; }
-            .pill span { color:#4c455b; font-size:13px; line-height:1.6; }
-            .section-title { font-family:'Noto Serif TC', serif; font-size:22px; margin:0 0 8px; color:#2b263f; }
-            .section-sub { color:#5a5363; margin:0 0 16px; font-size:14px; line-height:1.7; }
+            .pill { padding:14px 16px; border-radius:14px; background:linear-gradient(140deg, #fff3e6, #fffaf4); border:1px solid rgba(0,0,0,0.05); box-shadow:0 8px 20px rgba(0,0,0,0.05); }
+            .pill strong { display:block; font-size:15px; margin-bottom:6px; color:#3f2c22; }
+            .pill span { color:#5c4a41; font-size:13px; line-height:1.6; }
+            .section-title { font-family:'Noto Serif TC', serif; font-size:22px; margin:0 0 6px; color:#3a2720; }
+            .section-sub { color:#6b554a; margin:0 0 14px; font-size:14px; line-height:1.6; }
             .two-col { display:grid; grid-template-columns:1.05fr 1fr; gap:20px; align-items:center; }
             .two-col.reverse { grid-template-columns:1fr 1.05fr; }
-            .feature-list { margin:10px 0 0 0; padding-left:18px; color:#3e3848; line-height:1.7; }
+            .feature-list { margin:10px 0 0 0; padding-left:18px; color:#4a3931; line-height:1.7; }
             .feature-list li { margin-bottom:8px; }
-            .tagline { background:#eef3ff; color:#1f2f5a; padding:16px 18px; border-radius:14px; line-height:1.7; box-shadow:inset 0 1px 0 rgba(255,255,255,0.7); }
-            .image-frame { width:100%; border-radius:16px; overflow:hidden; background:#f8f9ff; box-shadow:0 14px 32px rgba(45,90,180,0.10); border:1px solid rgba(45,90,180,0.10); }
+            .tagline { background:#fff2e6; color:#4a2c22; padding:16px 18px; border-radius:14px; line-height:1.7; box-shadow:inset 0 1px 0 rgba(255,255,255,0.7); }
+            .image-frame { width:100%; border-radius:16px; overflow:hidden; background:#fff7f0; box-shadow:0 14px 32px rgba(120,70,40,0.12); border:1px solid rgba(120,70,40,0.12); }
             .image-frame img { width:100%; display:block; }
-            .stat-hero { background:linear-gradient(120deg,#ffd7c8,#f6e6df); border-radius:18px; padding:24px; box-shadow:0 16px 36px rgba(120,70,60,0.14); color:#2f2523; }
-            .stat-hero h3 { margin:0 0 6px; font-size:22px; color:#2f2523; }
-            .stat-hero p { margin:0 0 14px; color:#463b39; opacity:0.9; }
+            .stat-hero { background:linear-gradient(120deg,#ffcb66,#ffb347); border-radius:16px; padding:22px; box-shadow:0 16px 36px rgba(120,70,40,0.18); color:#231f1a; }
+            .stat-hero h3 { margin:0 0 6px; font-size:22px; color:#231f1a; }
+            .stat-hero p { margin:0 0 14px; color:#3b2a21; opacity:0.9; }
             .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; align-items:center; }
             .stat-item { display:flex; flex-direction:column; gap:4px; align-items:flex-start; }
-            .stat-num { font-size:40px; font-weight:800; color:#2c1f1e; line-height:1; }
-            .stat-label { font-size:14px; color:#433836; }
+            .stat-num { font-size:40px; font-weight:800; color:#0f0d0a; line-height:1; }
+            .stat-label { font-size:14px; color:#2f261f; }
             .stat-cta { margin-top:12px; }
             .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
-            .stat-card { background:linear-gradient(135deg, #f7e7e1, #f2ece9); color:#2f2a28; border-radius:14px; padding:16px 16px 18px; box-shadow:0 14px 34px rgba(120,70,60,0.10); }
+            .stat-card { background:linear-gradient(135deg, #ffe7d1, #ffd1b3); color:#3a2720; border-radius:14px; padding:16px 16px 18px; box-shadow:0 14px 34px rgba(120,70,40,0.12); }
             .stat-card h4 { margin:0 0 6px; font-size:16px; }
-            .stat-card p { margin:0; color:#4a3f3e; line-height:1.6; font-size:13px; }
+            .stat-card p { margin:0; color:#4d3328; line-height:1.6; font-size:13px; }
             .lookbook-inline { display:grid; grid-template-columns:1fr 1.1fr; gap:18px; align-items:center; }
-            .lookbook-carousel { position:relative; width:100%; height:320px; border-radius:16px; overflow:hidden; background:#fbf7f5; box-shadow:0 12px 26px rgba(120,70,60,0.1); border:1px solid rgba(0,0,0,0.05); }
-            .lookbook-carousel img { position:absolute; inset:10px; width:calc(100% - 20px); height:calc(100% - 20px); object-fit:contain; object-position:center; background:#fbf7f5; border-radius:12px; opacity:0; animation:fadeShow 18s infinite; }
+            .lookbook-carousel { position:relative; width:100%; height:320px; border-radius:16px; overflow:hidden; background:#fff7f0; box-shadow:0 12px 26px rgba(120,70,40,0.1); border:1px solid rgba(0,0,0,0.05); }
+            .lookbook-carousel img { position:absolute; inset:10px; width:calc(100% - 20px); height:calc(100% - 20px); object-fit:cover; border-radius:12px; opacity:0; animation:fadeShow 18s infinite; }
             .lookbook-carousel img:nth-child(1) { animation-delay:0s; }
             .lookbook-carousel img:nth-child(2) { animation-delay:6s; }
             .lookbook-carousel img:nth-child(3) { animation-delay:12s; }
@@ -75,13 +75,13 @@ def render_project_intro():
                 100% { opacity:0; }
             }
             .module-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
-            .module-card { border-radius:14px; padding:14px; background:linear-gradient(145deg,#f0f4ff,#faf7ff); border:1px solid rgba(0,0,0,0.04); box-shadow:0 10px 26px rgba(45,90,180,0.08); }
-            .module-card h4 { margin:0 0 8px; font-size:15px; color:#2b263f; }
-            .module-card p, .module-card ul { margin:0; color:#3b3547; font-size:13px; line-height:1.6; padding-left:0; }
+            .module-card { border-radius:14px; padding:14px; background:linear-gradient(145deg,#fff4ec,#fffaf6); border:1px solid rgba(0,0,0,0.04); box-shadow:0 10px 26px rgba(120,70,40,0.08); }
+            .module-card h4 { margin:0 0 8px; font-size:15px; color:#3a2720; }
+            .module-card p, .module-card ul { margin:0; color:#4a372f; font-size:13px; line-height:1.6; padding-left:0; }
             .mini-modules { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; margin-top:12px; }
-            .mini-card { background:#f7f8ff; border-radius:12px; padding:12px; border:1px solid rgba(0,0,0,0.04); box-shadow:0 8px 20px rgba(45,90,180,0.06); }
-            .mini-card h5 { margin:0 0 6px; font-size:14px; color:#2b263f; }
-            .mini-card ul { margin:0; padding-left:16px; color:#3b3547; line-height:1.6; font-size:13px; }
+            .mini-card { background:#fff7f0; border-radius:12px; padding:12px; border:1px solid rgba(0,0,0,0.04); box-shadow:0 8px 20px rgba(120,70,40,0.06); }
+            .mini-card h5 { margin:0 0 6px; font-size:14px; color:#3a2720; }
+            .mini-card ul { margin:0; padding-left:16px; color:#4a372f; line-height:1.6; font-size:13px; }
             .usecase-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; }
             .usecase-card { border-radius:14px; padding:14px; background:#fff7f0; color:#3a2720; border:1px solid rgba(0,0,0,0.05); box-shadow:0 12px 28px rgba(120,70,40,0.08); }
             .usecase-card h4 { margin:0 0 6px; font-size:16px; }
@@ -149,18 +149,21 @@ def render_project_intro():
                     <div class="stat-item">
                       <div class="stat-num">76%</div>
                       <div class="stat-label">願意購買個人化推薦商品（McKinsey State of Fashion 2025）</div>
-                      <a class="btn-secondary btn-mini" href="https://www.mckinsey.com/industries/retail/our-insights/state-of-fashion" style="margin-top:6px;">了解更多</a>
+                      <a class="btn-secondary" href="https://www.mckinsey.com/industries/retail/our-insights/state-of-fashion" style="margin-top:6px;">了解更多</a>
                     </div>
                     <div class="stat-item">
                       <div class="stat-num">40%</div>
                       <div class="stat-label">預計以「圖片」開啟購物旅程（Google Visual Search Insights）</div>
-                      <a class="btn-secondary btn-mini" href="https://www.thinkwithgoogle.com/consumer-insights/consumer-trends/visual-search-shopping/" style="margin-top:6px;">了解更多</a>
+                      <a class="btn-secondary" href="https://www.thinkwithgoogle.com/consumer-insights/consumer-trends/visual-search-shopping/" style="margin-top:6px;">了解更多</a>
                     </div>
                     <div class="stat-item">
                       <div class="stat-num">15–20%</div>
                       <div class="stat-label">品牌拍攝成本年增（Shopify / Deloitte 2024–2025）</div>
-                      <a class="btn-secondary btn-mini" href="https://www.deloittedigital.com/nl/en/insights/perspective/marketing-trends-2025.html" style="margin-top:6px;">了解更多</a>
+                      <a class="btn-secondary" href="https://www.deloittedigital.com/nl/en/insights/perspective/marketing-trends-2025.html" style="margin-top:6px;">了解更多</a>
                     </div>
+                  </div>
+                  <div class="stat-cta">
+                    <a class="btn-secondary" href="?page=dashboard">查看趨勢 Dashboard</a>
                   </div>
                 </div>
               </section>
@@ -215,9 +218,9 @@ def render_project_intro():
                     </div>
                   </div>
                   <div class="lookbook-carousel">
-                    <img src="{street_base}/20170324095254453_500.jpg" alt="street style 1">
-                    <img src="{street_base}/20170324100124006_500.jpg" alt="street style 2">
-                    <img src="{street_base}/20170324101342210_500.jpg" alt="street style 3">
+                    <img src="{base}/170464439-56930532-6d7b-4649-b009-09eebfa5a75b.png" alt="street style 1">
+                    <img src="{base}/7776aec2089baec3783e19ac6f7f2c9a.jpg" alt="street style 2">
+                    <img src="{base}/Screen-Shot-2018-06-07-at-10.14.28.png" alt="street style 3">
                   </div>
                 </div>
               </section>
@@ -266,7 +269,7 @@ def render_project_intro():
                   </div>
                   <div class="tilted-frame">
                     <div class="tilted-inner">
-                      <img src="{base}/Dashboard_CRM客戶分析_part.png" alt="CRM dashboard preview">
+                      <img src="{info_base}/Dashboard_CRM客戶分析_part.png" alt="CRM dashboard preview">
                     </div>
                   </div>
                 </div>

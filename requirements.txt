@@ -1,9 +1,9 @@
-# ----- PyTorch（CPU 版）-----
-torch==2.0.1+cpu
-torchvision==0.15.2+cpu
+# ----- PyTorch（使用你實測可用的版本）-----
+torch==2.9.1+cpu
+torchvision==0.24.1+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-# ----- Streamlit 主程式 -----
+# ----- Streamlit -----
 streamlit>=1.30
 
 # ----- Data Processing -----
@@ -11,7 +11,7 @@ pandas>=1.5
 numpy>=1.24
 scikit-learn>=1.2
 
-# ----- Image / NLP Utilities -----
+# ----- Image / NLP / Utils -----
 Pillow>=9.5
 ftfy>=6.1.1
 regex>=2023.6.3

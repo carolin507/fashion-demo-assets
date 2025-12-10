@@ -163,7 +163,7 @@ def render_trend_analysis():
             _counts(df.get("top_color")),
             names="value",
             values="count",
-            color_discrete_sequence=px.colors.qualitative.Set3,
+            color_discrete_sequence=WARM,
         )
         fig_top_color.update_traces(textinfo="percent+label")
         fig_top_color.update_layout(title="上身色彩", margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="white")
@@ -173,7 +173,7 @@ def render_trend_analysis():
             _counts(df.get("bottom_color")),
             names="value",
             values="count",
-            color_discrete_sequence=px.colors.qualitative.Set3,
+            color_discrete_sequence=WARM,
         )
         fig_bottom_color.update_traces(textinfo="percent+label")
         fig_bottom_color.update_layout(title="下身色彩", margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="white")
@@ -253,7 +253,7 @@ def render_trend_analysis():
             _counts(df.get("top_style")),
             names="value",
             values="count",
-            color_discrete_sequence=px.colors.qualitative.Pastel,
+            color_discrete_sequence=WARM,
         )
         fig_ts.update_traces(textinfo="percent+label")
         fig_ts.update_layout(title="上身風格", margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="white")
@@ -263,7 +263,7 @@ def render_trend_analysis():
             _counts(df.get("bottom_style")),
             names="value",
             values="count",
-            color_discrete_sequence=px.colors.qualitative.Pastel,
+            color_discrete_sequence=WARM,
         )
         fig_bs.update_traces(textinfo="percent+label")
         fig_bs.update_layout(title="下身風格", margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="white")

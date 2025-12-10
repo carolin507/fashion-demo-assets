@@ -168,7 +168,7 @@ def render_sales_dashboard():
                 x=top_sorted["revenue"][::-1],
                 y=top_sorted["sku"][::-1],
                 orientation="h",
-                marker=dict(color="#BFDBFE"),
+            marker=dict(color=WARM[3]),
                 hoverinfo="skip",
                 showlegend=False,
                 width=0.4,
@@ -179,7 +179,7 @@ def render_sales_dashboard():
                 x=top_sorted["revenue"][::-1],
                 y=top_sorted["sku"][::-1],
                 mode="markers+text",
-                marker=dict(color="#3B82F6", size=12),
+                marker=dict(color=WARM[0], size=12),
                 text=[f"${v:,.0f}" for v in top_sorted["revenue"][::-1]],
                 textposition="middle right",
                 hovertemplate="SKU %{y}<br>Revenue: $%{x:,.2f}<extra></extra>",
@@ -222,6 +222,7 @@ def render_sales_dashboard():
             values="revenue",
             color="size",
             color_discrete_map=size_map,
+            color_discrete_sequence=WARM,
         )
         fig_size.update_traces(textposition="inside", textinfo="percent+label")
         fig_size.update_layout(margin=dict(l=0, r=0, t=10, b=10), paper_bgcolor="white", showlegend=False)
@@ -236,6 +237,7 @@ def render_sales_dashboard():
             values="revenue",
             color="color",
             color_discrete_map=color_map,
+            color_discrete_sequence=WARM,
         )
         fig_color.update_traces(textposition="inside", textinfo="percent+label")
         fig_color.update_layout(margin=dict(l=0, r=0, t=10, b=10), paper_bgcolor="white", showlegend=False)
@@ -277,7 +279,7 @@ def render_sales_dashboard():
             names="price_band",
             values="revenue",
             hole=0.4,
-            color_discrete_sequence=px.colors.qualitative.Pastel,
+            color_discrete_sequence=WARM,
         )
         fig_price.update_traces(textposition="inside", textinfo="percent+label")
         fig_price.update_layout(margin=dict(l=0, r=0, t=10, b=10), paper_bgcolor="white", showlegend=False)

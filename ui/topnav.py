@@ -5,6 +5,7 @@ def render_topnav():
     menu = [
         {"label": "解決方案", "target": "intro"},
         {"label": "AI穿搭Showroom", "target": "wardrobe"},
+        {"label": "Lookbook靈感牆", "target": "lookbook"},
         {
             "label": "商業洞察BI方案",
             "children": [
@@ -53,23 +54,26 @@ def render_topnav():
         st.markdown("</div>", unsafe_allow_html=True)
 
     bi_children = next((item.get("children", []) for item in menu if "children" in item), [])
+    bi_targets = {child_target for _, child_target in bi_children}
 
-    if bi_children:
-        sub_links = []
-        for text, target in bi_children:
-            active_class = " active" if current == target else ""
-            sub_links.append(f'<a class="topnav-pill{active_class}" href="?page={target}">{text}</a>')
-
-        st.markdown(
-            """
-            <div class="topnav-subnav">
-                <div class="topnav-subtitle">商業洞察 BI 方案</div>
-                <div class="topnav-pill-row">
-            """
-            + "".join(sub_links)
-            + """
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+    # Show subnav only when viewing BI pages (keeps it collapsed otherwise)
+    if bi_children and current in bi_targets:
+        st.markdown('<div class="topnav-subnav">', unsafe_allow_html=True)
+        st.markdown('<div class="topnav-subtitle">商業洞察 BI 方案</div>', unsafe_allow_html=True)
+        pill_cols = st.columns(len(bi_children), gap="small")
+        for (text, target), col in zip(bi_children, pill_cols):
+            with col:
+                clicked = st.button(
+                    text,
+                    key=f"nav_bi_{target}",
+                    type="primary" if current == target else "secondary",
+                    use_container_width=True,
+                )
+                if clicked:
+                    st.session_state.page = target
+                    try:
+                        st.query_params = {"page": target}
+                    except Exception:
+                        st.experimental_set_query_params(page=target)
+                    st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)

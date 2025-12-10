@@ -126,8 +126,11 @@ def load_global_css():
     }
 
     /* 主要按鈕（當前頁） */
-    .topnav-right [data-testid="baseButton-primary"] {
-        background: linear-gradient(135deg, #2f2b33, #3f3845) !important;
+    .topnav-right [data-testid="baseButton-primary"],
+    .topnav-right .stButton > button[kind="primary"],
+    .topnav-right .stButton > button[class*="primary"] {
+        background: linear-gradient(135deg, #2b262f, #3a343d) !important;
+        background-color: #2b262f !important;
         color: #ffffff !important;
         border-color: rgba(47,43,51,0.6) !important;
         box-shadow: 0 10px 22px rgba(47,43,51,0.35) !important;
@@ -143,15 +146,15 @@ def load_global_css():
         box-shadow: 0 5px 12px rgba(0,0,0,0.05) !important;
     }
 
-    /* BI sub-nav pills */
+    /* BI sub-nav (centered buttons) */
     .topnav-subnav {
-        margin: 2px 0 18px;
-        padding: 10px 0 0;
+        margin: 6px 0 12px;
+        padding: 6px 0 0;
+        width: 100%;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        border-top: 1px solid rgba(0,0,0,0.04);
+        gap: 8px;
     }
     .topnav-subtitle {
         font-size: 12px;
@@ -159,37 +162,35 @@ def load_global_css():
         text-transform: uppercase;
         color: #6f6055;
         font-weight: 700;
-        margin-right: 6px;
+        margin: 0;
     }
-    .topnav-pill-row {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
+    .topnav-subnav .stColumn { padding: 0 !important; }
+    .topnav-subnav .stButton > button {
+        padding: 9px 14px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease !important;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.05) !important;
     }
-    .topnav-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 9px 14px;
-        border-radius: 12px;
-        background: #ffffff;
-        border: 1px solid rgba(59,45,39,0.12);
-        color: #3b2d27;
-        font-weight: 600;
-        font-size: 14px;
-        text-decoration: none;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.05);
-        transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+    .topnav-subnav [data-testid="baseButton-secondary"] {
+        background: #f5f0e8 !important;
+        color: #3b312a !important;
+        border: 1px solid rgba(59,45,39,0.12) !important;
+        box-shadow: none !important;
     }
-    .topnav-pill:hover {
+    .topnav-subnav [data-testid="baseButton-primary"],
+    .topnav-subnav .stButton > button[kind="primary"],
+    .topnav-subnav .stButton > button[class*="primary"] {
+        background: linear-gradient(135deg, #2b262f, #3a343d) !important;
+        background-color: #2b262f !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(47,43,51,0.6) !important;
+        box-shadow: 0 10px 22px rgba(47,43,51,0.28) !important;
+    }
+    .topnav-subnav .stButton > button:hover {
         transform: translateY(-1px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-    }
-    .topnav-pill.active {
-        background: linear-gradient(135deg, #2f2b33, #3f3845);
-        color: #ffffff;
-        border-color: rgba(47,43,51,0.6);
-        box-shadow: 0 10px 22px rgba(47,43,51,0.28);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
     }
 
     
@@ -217,8 +218,8 @@ def load_global_css():
         height: 360px;
         overflow: hidden;
 
-        border-radius: 14px;
-        margin: 0 0 18px 0;
+        border-radius: 18px;
+        margin: 0;
 
         box-shadow: var(--shadow-soft);
     }
@@ -242,9 +243,8 @@ def load_global_css():
         color:#FDF8F1;
     }
     .hero-outer {
-        margin-left: calc(-1 * var(--page-pad)) !important;
-        margin-right: calc(-1 * var(--page-pad)) !important;
-        width: calc(100% + 2 * var(--page-pad)) !important;
+        width: 100%;
+        margin: 0 0 18px 0;
     }
 
 
@@ -491,21 +491,5 @@ def load_global_css():
     @media (max-width: 640px) {
         .mini-lookbook-grid { grid-template-columns: 1fr; }
     }
-                  
-    .hero-wrapper {
-        margin-left: calc(-1 * var(--page-pad)) !important;
-        margin-right: calc(-1 * var(--page-pad)) !important;
-        width: calc(100% + 2 * var(--page-pad)) !important;
-    }
-    .hero-wrapper {
-        position: relative;
-        width: 100%;
-        height: 360px;
-        overflow: hidden;
-
-        border-radius: 18px; /* ← 真正的圓角應該放這裡 */
-        box-shadow: var(--shadow-soft);
-    }
-
         </style>
     """).strip()

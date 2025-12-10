@@ -140,7 +140,7 @@ def render_crm_dashboard():
                 path=["segment"],
                 values="count",
                 color="count",
-                color_continuous_scale="Reds",
+                color_continuous_scale="OrRd",
                 title="RFM Segment 客戶結構",
             )
             fig_seg.update_layout(
@@ -163,8 +163,21 @@ def render_crm_dashboard():
                 color="count",
                 color_continuous_scale="Reds",
                 title="客戶國家分佈",
+                scope="europe",
             )
-            fig_country.update_layout(margin=dict(l=0, r=0, t=50, b=0))
+            fig_country.update_geos(
+                fitbounds="locations",
+                projection_scale=4.2,
+                center=dict(lat=54, lon=12),
+                showcountries=True,
+                showcoastlines=True,
+                coastlinecolor="#d4d4d4",
+                landcolor="#ffffff",
+            )
+            fig_country.update_layout(
+                margin=dict(l=0, r=0, t=50, b=0),
+                height=480,
+            )
             st.plotly_chart(fig_country, use_container_width=True)
             _insight_box("Insight", insights.get("geo", []))
         else:
@@ -209,7 +222,7 @@ def render_crm_dashboard():
                 names="channel_order",
                 title="訂單渠道分佈",
                 hole=0.55,
-                color_discrete_sequence=px.colors.qualitative.Pastel,
+                color_discrete_sequence=WARM,
             )
             fig_channel.update_traces(textposition="outside", textinfo="percent+label")
             fig_channel.update_layout(

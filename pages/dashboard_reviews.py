@@ -155,7 +155,7 @@ def render_reviews_dashboard():
             x="word",
             y="count",
             text_auto=True,
-            color_discrete_sequence=["#22C55E"],
+            color_discrete_sequence=WARM,
         )
         fig_kw_pos.update_layout(xaxis_tickangle=-45, margin=dict(l=10, r=10, t=10, b=60))
         st.plotly_chart(fig_kw_pos, use_container_width=True)
@@ -171,7 +171,7 @@ def render_reviews_dashboard():
             x="word",
             y="count",
             text_auto=True,
-            color_discrete_sequence=["#EF4444"],
+            color_discrete_sequence=WARM,
         )
         fig_kw_neg.update_layout(xaxis_tickangle=-45, margin=dict(l=10, r=10, t=10, b=60))
         st.plotly_chart(fig_kw_neg, use_container_width=True)
@@ -192,7 +192,7 @@ def render_reviews_dashboard():
             x="Department Name",
             y="count",
             text_auto=True,
-            color_discrete_sequence=["#22C55E"],
+            color_discrete_sequence=WARM,
         )
         fig_pos_dept.update_layout(
             xaxis_title="部門",
@@ -217,7 +217,7 @@ def render_reviews_dashboard():
             x="Department Name",
             y="count",
             text_auto=True,
-            color_discrete_sequence=["#EF4444"],
+            color_discrete_sequence=WARM,
         )
         fig_neg_dept.update_layout(
             xaxis_title="部門",
@@ -252,7 +252,7 @@ def render_reviews_dashboard():
         x="age_bin",
         y="rating",
         text_auto=True,
-        color_discrete_sequence=[ACCENT],
+        color_discrete_sequence=WARM,
     )
     fig_age.update_layout(
         title="Average Rating by Age Bin",
