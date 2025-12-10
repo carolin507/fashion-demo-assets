@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from modules.analytics.insights.review_insights import generate_review_insights
 
 
 @st.cache_data
@@ -35,6 +36,7 @@ def render_reviews_dashboard():
     st.markdown("## 顧客評價分析 Review & VOC Dashboard")
 
     reviews, keywords = load_reviews_data()
+    insights = generate_review_insights(reviews)
 
     def _metric_card(label: str, value: str, helper: str | None = None) -> None:
         st.markdown(
@@ -55,6 +57,27 @@ def render_reviews_dashboard():
             unsafe_allow_html=True,
         )
 
+    def _insight_box(title: str, lines: list[str]) -> None:
+        if not lines:
+            return
+        st.markdown(
+            f"""
+            <div style="
+                margin-top:10px;
+                padding:12px 14px;
+                border:1px solid #E7E5E4;
+                border-radius:12px;
+                background:#FFFBEB;
+            ">
+              <div style="font-size:12px;color:{MUTED};letter-spacing:0.08em;text-transform:uppercase;">{title}</div>
+              <ul style="margin:6px 0 0 18px;color:{INK};font-size:13px;line-height:1.5;">
+                {"".join(f"<li>{line}</li>" for line in lines)}
+              </ul>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
     def _top_keywords_from_reviews(df: pd.DataFrame, n: int = 20):
         if df.empty:
             return pd.DataFrame({"word": [], "count": []})
@@ -62,7 +85,7 @@ def render_reviews_dashboard():
             df["review"]
             .fillna("")
             .str.lower()
-            .str.replace(r"[^a-z0-9\s]", " ", regex=True)
+            .str.replace(r"[^a-z0-9\\s]", " ", regex=True)
             .str.split()
         )
         counts = {}
@@ -87,6 +110,9 @@ def render_reviews_dashboard():
         _metric_card("平均星等", f"{avg_rating:.2f} ★")
     with c3:
         _metric_card("推薦率", f"{recommended_pct:.1f}%", helper="recommended = 1")
+
+    _insight_box("Core Insights", insights.get("core", []))
+    _insight_box("Action Plan", insights.get("actions", []))
 
     st.markdown("---")
 
@@ -275,3 +301,8 @@ def render_reviews_dashboard():
     with col_ln:
         st.markdown("##### 負面最新 5 筆")
         _review_cards(negative_reviews, "Negative", "#EF4444")
+
+
+# Alias for legacy import
+def render_color_trends():
+    return render_reviews_dashboard()

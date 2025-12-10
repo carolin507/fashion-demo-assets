@@ -80,27 +80,6 @@ def render_crm_dashboard():
         recent_mask = sales_full["sale_date_order"] >= (pd.Timestamp.today() - pd.Timedelta(days=30))
     monthly_orders = int(recent_mask.sum()) if recent_mask is not None else None
 
-    vip_text = "N/A"
-    if vip_count is not None and total_customers:
-        vip_text = f"{vip_count} ({vip_count / total_customers:.1%})"
-
-    with st.container():
-        col1, col2, col3, col4 = st.columns(4, gap="medium")
-        with col1:
-            _metric_card("總客戶", f"{total_customers:,}", helper="唯一 customer_id")
-        with col2:
-            _metric_card("VIP 佔比", vip_text, helper="VIP / Champions")
-        with col3:
-            monetary_text = f"${avg_monetary:,.0f}" if avg_monetary else "N/A"
-            _metric_card("平均客單 (Monetary)", monetary_text, helper="RFM monetary 平均")
-        with col4:
-            revenue_text = f"${revenue_total:,.0f}" if revenue_total else "N/A"
-            helper = "近 30 天訂單數" if monthly_orders is not None else "總營收"
-            value = f"{monthly_orders:,}" if monthly_orders is not None else revenue_text
-            _metric_card("近期動能", value, helper=helper)
-
-    st.markdown("---")
-
     def _insight_box(title: str, lines: list[str]) -> None:
         if not lines:
             return
@@ -121,6 +100,30 @@ def render_crm_dashboard():
             """,
             unsafe_allow_html=True,
         )
+
+    vip_text = "N/A"
+    if vip_count is not None and total_customers:
+        vip_text = f"{vip_count} ({vip_count / total_customers:.1%})"
+
+    with st.container():
+        col1, col2, col3, col4 = st.columns(4, gap="medium")
+        with col1:
+            _metric_card("總客戶", f"{total_customers:,}", helper="唯一 customer_id")
+        with col2:
+            _metric_card("VIP 佔比", vip_text, helper="VIP / Champions")
+        with col3:
+            monetary_text = f"${avg_monetary:,.0f}" if avg_monetary else "N/A"
+            _metric_card("平均客單 (Monetary)", monetary_text, helper="RFM monetary 平均")
+        with col4:
+            revenue_text = f"${revenue_total:,.0f}" if revenue_total else "N/A"
+            helper = "近 30 天訂單數" if monthly_orders is not None else "總營收"
+            value = f"{monthly_orders:,}" if monthly_orders is not None else revenue_text
+            _metric_card("近期動能", value, helper=helper)
+
+    _insight_box("Core Insights", insights.get("core", []))
+    _insight_box("Action Plan", insights.get("actions", []))
+
+    st.markdown("---")
 
     st.markdown("#### 分群與地理概覽")
     col_seg, col_geo = st.columns((1.1, 1))

@@ -218,7 +218,7 @@ def match_image_url(df: pd.DataFrame, item: dict, gender: str):
             and candidate["style"] == style
             and candidate["category"] == category
         ):
-            return row.get(f"{target}_url")
+            return row.get("filename")
 
     return None
 
@@ -248,7 +248,9 @@ class GenderedRecommender:
         enriched = []
         for rec in raw_results:
             rec = dict(rec)
-            rec["image_url"] = match_image_url(self.df, rec, gender)
+            filename = match_image_url(self.df, rec, gender)
+            rec["filename"] = filename
+            rec["image_url"] = filename
             enriched.append(rec)
 
         return enriched

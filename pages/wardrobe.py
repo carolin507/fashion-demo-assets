@@ -222,11 +222,7 @@ def render_wardrobe(RECOMMENDER: GenderedRecommender):
         style = rec.get("style")
         cat = rec.get("category")
         image_path = rec.get("filename")
-
         url = BASE_URL + image_path if image_path else ""
-
-        if not url:
-            continue
 
         cards.append(dedent(f'''<div class="rec-card">
     <img src="{url}" class="rec-img"/>

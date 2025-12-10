@@ -115,7 +115,28 @@ def _insight_age_segment(rfm: pd.DataFrame) -> List[str]:
 
 def generate_crm_insights(rfm: pd.DataFrame, sales_full: pd.DataFrame) -> Dict[str, List[str]]:
     """產出 CRM Dashboard 使用的 Insight 結構。"""
+    total_customers = rfm["customer_id"].nunique() if "customer_id" in rfm.columns else len(rfm)
+    vip_count = int((rfm["segment"] == "VIP / Champions").sum()) if "segment" in rfm.columns else 0
+    vip_pct = vip_count / total_customers if total_customers else 0
+    avg_monetary = float(rfm["monetary"].mean()) if "monetary" in rfm.columns else None
+    core = [
+        f"總客戶 {total_customers:,} 人，VIP {vip_count} ({vip_pct:.1%})。",
+    ]
+    if avg_monetary:
+        core.append(f"平均客單 ${avg_monetary:,.0f}，可再針對高價值客群加碼。")
+
+    actions = []
+    if vip_pct > 0.1:
+        actions.append("針對 VIP / Champions 設計會員專屬任務、推薦與補貨通知。")
+    if avg_monetary:
+        actions.append("以平均客單為門檻設置階梯折扣，帶動客單上移。")
+    if "country" in rfm.columns and not rfm["country"].empty:
+        lead_country = rfm["country"].value_counts().index[0]
+        actions.append(f"在主要市場 {lead_country} 推出在地化訊息或分眾 EDM。")
+
     return {
+        "core": core,
+        "actions": actions,
         "segment": _insight_segment(rfm),
         "geo": _insight_geo(rfm),
         "revenue_trend": _insight_revenue_trend(sales_full),

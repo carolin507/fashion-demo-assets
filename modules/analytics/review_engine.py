@@ -1,14 +1,15 @@
+# modules/analytics/review_engine.py
+
 import os
-import re
 import pandas as pd
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import spacy
 from tqdm import tqdm
 
-# ============================
-# NLP 初始化
-# ============================
+# ==============================
+# NLP 模型初始化
+# ==============================
 
 # VADER
 try:
@@ -16,23 +17,12 @@ try:
 except LookupError:
     nltk.download("vader_lexicon")
 
-# spaCy：只載 tokenizer + POS
+# spaCy — 只開 tokenizer + POS tagger（速度快 10 倍）
 try:
     nlp = spacy.load("en_core_web_sm", disable=["parser", "ner", "lemmatizer"])
-except Exception:
+except:
     os.system("python -m spacy download en_core_web_sm")
     nlp = spacy.load("en_core_web_sm", disable=["parser", "ner", "lemmatizer"])
-
-
-# ============================
-# 基本清理（順便避免空 token）
-# ============================
-def clean_text(text):
-    text = text.lower()
-    text = text.encode("ascii", "ignore").decode()  # remove emoji
-    text = re.sub(r"[^a-z\s]", " ", text)
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
 
 
 class ReviewEngine:
@@ -41,9 +31,9 @@ class ReviewEngine:
         self.df = pd.read_csv(self.data_path)
         self.clean_data()
 
-    # -------------------------------
-    # Step 1: 清理欄位
-    # -------------------------------
+    # --------------------------------------------
+    # STEP 1：欄位清理
+    # --------------------------------------------
     def clean_data(self):
         df = self.df.copy()
 
@@ -58,16 +48,16 @@ class ReviewEngine:
         )
 
         df["review"] = df["review"].fillna("").astype(str)
-        df["review"] = df["review"].apply(clean_text)
-
         df["rating"] = df["rating"].fillna(0).astype(int)
+        df["recommended"] = df["recommended"].fillna(0).astype(int)
+
         df["review_length"] = df["review"].str.len()
 
         self.df = df
 
-    # -------------------------------
-    # Step 2: 情緒標記
-    # -------------------------------
+    # --------------------------------------------
+    # STEP 2：情緒分類（VADER + Rating 強化版本）
+    # --------------------------------------------
     def add_sentiment(self):
         sia = SentimentIntensityAnalyzer()
         df = self.df.copy()
@@ -80,166 +70,83 @@ class ReviewEngine:
             score = row["sentiment_score_raw"]
             rating = row["rating"]
 
+            # ⭐ Rule 1：強烈高分 → 必定 Positive
             if rating >= 4:
                 return "Positive"
+
+            # ⭐ Rule 2：強烈低分 → 必定 Negative
             if rating <= 2:
                 return "Negative"
 
+            # ⭐ Rule 3：中間 3 星用 VADER 判斷語氣
             if score >= 0.2:
                 return "Positive"
-            if score <= -0.2:
+            elif score <= -0.2:
                 return "Negative"
-            return "Neutral"
+            else:
+                return "Neutral"
 
         df["sentiment_label"] = df.apply(classify, axis=1)
         self.df = df
 
-    # -------------------------------
-    # Step 3: 關鍵字萃取（ADJ + NOUN）
-    # -------------------------------
-    def extract_keywords(self, top_n=50, min_review_length=5):
+    # --------------------------------------------
+    # STEP 3：形容詞（ADJ）關鍵字萃取 + 雙重限制
+    # --------------------------------------------
+    def extract_keywords(self, top_n_per_sentiment=50, min_review_length=8):
+        df = self.df.copy()
 
-        # Ensure sentiment is computed before keyword extraction
-        if "sentiment_label" not in self.df.columns:
-            self.add_sentiment()
+        # 過濾掉沒有內容的評論
+        df = df[df["review_length"] >= min_review_length]
 
-        # Safety: rebuild sentiment labels if they are still missing (e.g., caller
-        # skipped add_sentiment or loaded a pre-cleaned df without labels).
-        if "sentiment_label" not in self.df.columns:
-            fallback_df = self.df.copy()
-            if "rating" in fallback_df.columns:
-                fallback_df["sentiment_label"] = fallback_df["rating"].apply(
-                    lambda r: "Positive" if r >= 4 else ("Negative" if r <= 2 else "Neutral")
-                )
-            else:
-                fallback_df["sentiment_label"] = "Neutral"
-            self.df = fallback_df
+        # 雙重限制（真正正向）
+        pos_df = df[(df["sentiment_label"] == "Positive") & (df["rating"] >= 4)]
 
-        df = self.df[self.df["review_length"] >= min_review_length].copy()
+        # 雙重限制（真正負向）
+        neg_df = df[(df["sentiment_label"] == "Negative") & (df["rating"] <= 2)]
 
-        # Broaden filters so we do not drop too many reviews when data is sparse
-        pos_df = df[df["sentiment_label"] == "Positive"]
-        neg_df = df[df["sentiment_label"] == "Negative"]
-
-        # Fallback to rating-based slices if sentiment labels are missing or empty
-        if pos_df.empty and "rating" in df.columns:
-            pos_df = df[df["rating"] >= 4]
-        if neg_df.empty and "rating" in df.columns:
-            neg_df = df[df["rating"] <= 2]
-
-        # 主觀外觀形容詞避免放進 Negative
-        positive_style_words = {
-            "cute",
-            "pretty",
-            "beautiful",
-            "nice",
-            "lovely",
-            "gorgeous",
-            "stylish",
-            "flattering",
+        groups = {
+            "Positive": pos_df,
+            "Negative": neg_df
         }
 
-        # 針對實質面負面形容詞
-        negative_adj_words = {
-            "small",
-            "tight",
-            "itchy",
-            "thin",
-            "cheap",
-            "shapeless",
-            "uncomfortable",
-            "loose",
-            "big",
-            "huge",
-            "sheer",
-            "transparent",
-            "scratchy",
-            "bad",
-            "poor",
-        }
+        results = []
 
-        # 痛點名詞（常見 VOC）
-        pain_nouns_set = {
-            "fit",
-            "size",
-            "material",
-            "quality",
-            "fabric",
-            "support",
-            "stitching",
-            "waist",
-            "color",
-            "length",
-        }
+        for sentiment, subset_df in groups.items():
+            subset = subset_df["review"]
 
-        POS_ADJ = []
-        NEG_ADJ = []
-        NEG_NOUN = []
+            print(f"\n[萃取 {sentiment} 關鍵字] → 評論數量：{len(subset)}")
 
-        # ----------------------
-        # Positive ADJ
-        # ----------------------
-        print("\nExtracting Positive adjectives...")
-        for doc in tqdm(
-            nlp.pipe(pos_df["review"], batch_size=200),
-            total=len(pos_df),
-            ncols=90,
-        ):
-            for t in doc:
-                if t.pos_ == "ADJ" and len(t.lemma_) > 1:
-                    if t.lemma_ not in negative_adj_words:
-                        POS_ADJ.append(t.lemma_)
+            all_adjs = []
 
-        # ----------------------
-        # Negative ADJ + NOUN
-        # ----------------------
-        print("\nExtracting Negative adjectives and pain-point nouns...")
-        for doc in tqdm(
-            nlp.pipe(neg_df["review"], batch_size=200),
-            total=len(neg_df),
-            ncols=90,
-        ):
-            for t in doc:
+            # tqdm progress bar
+            for text in tqdm(subset, desc=f"Processing {sentiment}", ncols=90):
+                doc = nlp(text.lower())
 
-                # 形容詞側重產品痛點
-                if t.pos_ == "ADJ" and len(t.lemma_) > 1:
-                    if t.lemma_ not in positive_style_words:
-                        NEG_ADJ.append(t.lemma_)
+                # ⭐ 只抓形容詞（ADJ）— 真正情緒詞
+                adjs = [token.lemma_ for token in doc if token.pos_ == "ADJ"]
+                all_adjs.extend(adjs)
 
-                # 痛點名詞
-                if t.pos_ == "NOUN" and len(t.lemma_) > 1:
-                    if t.lemma_ in pain_nouns_set:
-                        NEG_NOUN.append(t.lemma_)
+            # 若沒有 ADJ 則跳過
+            if len(all_adjs) == 0:
+                continue
 
-        # 統計
-        pos_adj_df = pd.Series(POS_ADJ).value_counts().reset_index()
-        pos_adj_df.columns = ["word", "count"]
-        pos_adj_df["sentiment"] = "Positive_ADJ"
+            freq = pd.Series(all_adjs).value_counts().reset_index()
+            freq.columns = ["word", "count"]
+            freq["sentiment"] = sentiment
 
-        neg_adj_df = pd.Series(NEG_ADJ).value_counts().reset_index()
-        neg_adj_df.columns = ["word", "count"]
-        neg_adj_df["sentiment"] = "Negative_ADJ"
+            results.append(freq.head(top_n_per_sentiment))
 
-        neg_noun_df = pd.Series(NEG_NOUN).value_counts().reset_index()
-        neg_noun_df.columns = ["word", "count"]
-        neg_noun_df["sentiment"] = "Negative_NOUN"
-
-        # 合併並保留前 top_n
-        frames = []
-        for df_slice in (pos_adj_df, neg_adj_df, neg_noun_df):
-            if not df_slice.empty:
-                frames.append(df_slice.head(top_n))
-
-        if frames:
-            self.keywords = pd.concat(frames, ignore_index=True)
+        if results:
+            keywords = pd.concat(results, ignore_index=True)
         else:
-            self.keywords = pd.DataFrame(columns=["word", "count", "sentiment"])
+            keywords = pd.DataFrame(columns=["word", "count", "sentiment"])
 
-        return self.keywords
+        self.keywords = keywords
+        return keywords
 
-    # -------------------------------
-    # Step 4: 輸出
-    # -------------------------------
+    # --------------------------------------------
+    # STEP 4：輸出處理後資料
+    # --------------------------------------------
     def export_processed(self, out_dir="data/processed/reviews"):
         os.makedirs(out_dir, exist_ok=True)
 

@@ -1,4 +1,4 @@
-"""Sales Insight Engine: 產出銷售表現重點與行動建議。"""
+"""Sales Insight Engine: outputs highlights and actions for sales dashboards."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ def _insight_revenue_trend(sales: pd.DataFrame) -> List[str]:
     recent = monthly["revenue"].iloc[-1]
     prev = monthly["revenue"].iloc[-2] if len(monthly) >= 2 else None
     best_row = monthly.loc[monthly["revenue"].idxmax()]
-    lines.append(f"最新月份營收為 {_fmt_currency(recent)}。")
+    lines.append(f"最新月份營收 {_fmt_currency(recent)}。")
     if prev and prev > 0:
         growth = (recent - prev) / prev
         lines.append(f"月增率 {growth:.1%}，需持續追蹤變動原因。")
@@ -86,7 +86,7 @@ def _insight_price_band(sales: pd.DataFrame) -> List[str]:
     high_band = agg[agg["band"] == "500+"]["revenue"].iloc[0]
     if high_band / total > 0.1:
         lines.append("高價帶貢獻可觀，考慮 VIP 專屬折扣或分期選項，鞏固高值客群。")
-    mid_share = agg.loc[agg["band"].isin(["200-250", "250-300", "300-350"])]['revenue'].sum() / total
+    mid_share = agg.loc[agg["band"].isin(["200-250", "250-300", "300-350"])]["revenue"].sum() / total
     if mid_share < 0.2:
         lines.append("中價帶占比低，評估推出組合或優惠券拉升中價帶轉換。")
     return lines
@@ -103,7 +103,11 @@ def _insight_color(color_sales: pd.DataFrame) -> List[str]:
     if len(color_sorted) >= 3:
         top3 = color_sorted.head(3)["revenue"].sum()
         lines.append(f"前三色佔 {_fmt_pct(top3, total)}，可做主打色專區或再版。")
-    tail_share = color_sorted.tail(max(1, len(color_sorted) // 3))["revenue"].sum() / total if total else 0
+    tail_share = (
+        color_sorted.tail(max(1, len(color_sorted) // 3))["revenue"].sum() / total
+        if total
+        else 0
+    )
     if tail_share < 0.1:
         lines.append("長尾色系貢獻低，可縮減庫存或併入組合清倉。")
     return lines
@@ -173,8 +177,21 @@ def generate_sales_insights(
     """產出銷售儀表板使用的 Insight 與行動建議。"""
     color_sales = color_sales if color_sales is not None else pd.DataFrame()
     size_sales = size_sales if size_sales is not None else pd.DataFrame()
+    total_revenue = sales_clean["revenue"].sum()
+    total_orders = sales_clean["order_id"].nunique() if "order_id" in sales_clean.columns else len(sales_clean)
+    avg_order_value = total_revenue / total_orders if total_orders else 0
+    core = [
+        f"總營收 {_fmt_currency(total_revenue)}，訂單 {total_orders:,} 筆，AOV {_fmt_currency(avg_order_value)}。",
+    ]
+    actions = [
+        "針對高 AOV 客群推出加價購或 VIP 禮遇。",
+        "依價格帶拆分素材，低價帶以組合/加購，高價帶以分期/會員折扣推動。",
+        "主打 Top SKU 與主力渠道，並對尾端 SKU 做清庫或加購策略。",
+    ]
 
     return {
+        "core": core,
+        "actions": actions,
         "revenue_trend": _insight_revenue_trend(sales_clean),
         "price_band": _insight_price_band(sales_clean),
         "color": _insight_color(color_sales),

@@ -121,9 +121,12 @@ def render_sales_dashboard():
     with col4:
         _metric_card("平均訂單金額 (AOV)", f"${avg_order_value:,.0f}", helper="Revenue / Orders")
 
+    _insight_box("Core Insights", insights.get("core", []))
+    _insight_box("Action Plan", insights.get("actions", []))
+
     st.markdown("---")
 
-    # Monthly revenue (full width bar as reference layout)
+    # Monthly revenue
     st.markdown("#### 月度營收")
     monthly_sales["year_month"] = monthly_sales["year"].astype(str) + "-" + monthly_sales["month"].astype(str)
     fig_month = px.bar(
@@ -157,7 +160,6 @@ def render_sales_dashboard():
         top_sorted = top_sorted.copy()
         top_sorted["sku"] = top_sorted["sku"].astype(str)
         fig_top10 = go.Figure()
-        # stem
         fig_top10.add_trace(
             go.Bar(
                 x=top_sorted["revenue"][::-1],
@@ -169,7 +171,6 @@ def render_sales_dashboard():
                 width=0.4,
             )
         )
-        # lollipop head
         fig_top10.add_trace(
             go.Scatter(
                 x=top_sorted["revenue"][::-1],
@@ -194,7 +195,7 @@ def render_sales_dashboard():
         fig_top10.update_yaxes(
             type="category",
             categoryorder="array",
-            categoryarray=list(top_sorted["sku"]),
+            categoryarray=list(top_sorted["sku"][::-1]),
             autorange="reversed",
             gridcolor="#F5F5F4",
         )
