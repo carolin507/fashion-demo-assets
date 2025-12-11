@@ -417,10 +417,33 @@ def load_global_css():
         display:block;
     }
     .gallery-item .caption {
-        margin-top:6px;
-        font-size:12px;
-        color:#6a5d52;
+        margin-top:8px;
+        font-size:15px;
+        line-height:1.55;
+        color:#3b332d;
         text-align:center;
+        font-weight:600;
+    }
+    .gallery-item .caption .lookbook-chip {
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:4px 10px;
+        border-radius:999px;
+        background:var(--chip-bg, rgba(0,0,0,0.04));
+        color:var(--chip-fg, #2f241e);
+        font-size:13px;
+        font-weight:600;
+        line-height:1.2;
+        border:1px solid rgba(0,0,0,0.06);
+        box-shadow:0 4px 10px rgba(0,0,0,0.04);
+    }
+    .gallery-item .caption .chip-dot {
+        width:11px;
+        height:11px;
+        border-radius:999px;
+        background:var(--chip-color, #7a6a5a);
+        box-shadow:0 0 0 1px rgba(0,0,0,0.08);
     }
     @media (max-width: 768px) {
         .hero-wrapper { width:100%; margin:0 0 24px 0; height:260px; border-radius:0; }

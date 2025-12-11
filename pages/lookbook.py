@@ -29,6 +29,21 @@ COLOR_ZH = {
     "Orange": "橘色", "Pink": "粉紅色", "Red": "紅色", "Green": "綠色",
     "Brown": "咖啡色", "Blue": "藍色", "Yellow": "黃色", "Purple": "紫色",
 }
+COLOR_HEX = {
+    "Black": "#161616",
+    "Gray": "#7f7f7f",
+    "White": "#f5f5f5",
+    "Beige": "#d9c7b1",
+    "Orange": "#e67a2e",
+    "Pink": "#e88abf",
+    "Red": "#d64541",
+    "Green": "#4a8c64",
+    "Brown": "#7b4b32",
+    "Blue": "#3f68b5",
+    "Yellow": "#d3a018",
+    "Purple": "#7d5fb2",
+}
+LIGHT_COLORS = {"White", "Beige", "Yellow", "Pink", "Orange"}
 
 
 @st.cache_data
@@ -47,6 +62,13 @@ def load_lookbook_data() -> List[Dict[str, Any]]:
 
 def _options_from(values) -> List[str]:
     return ["全部"] + sorted({v for v in values if v})
+
+def _hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
+    h = hex_color.lstrip("#")
+    if len(h) == 3:
+        h = "".join(ch * 2 for ch in h)
+    return tuple(int(h[idx:idx+2], 16) for idx in (0, 2, 4))
+
 
 
 def _filter_data(
@@ -137,6 +159,19 @@ def render_lookbook():
         st.info("沒有符合條件的穿搭，換個條件試試吧！")
         return
 
+    def _color_chip(color: str) -> str:
+        color_hex = COLOR_HEX.get(color, "#7a6a5a")
+        r, g, b = _hex_to_rgb(color_hex)
+        alpha = 0.2 if color in LIGHT_COLORS else 0.16
+        bg = f"rgba({r},{g},{b},{alpha})"
+        text_color = "#2f241e"
+        color_zh = COLOR_ZH.get(color, color or "-")
+        return (
+            f'<span class="lookbook-chip" style="--chip-color:{color_hex}; --chip-bg:{bg}; --chip-fg:{text_color};">'
+            f'<span class="chip-dot"></span>{color_zh}'
+            "</span>"
+        )
+
     def _part_label(part: Dict[str, Any]) -> str:
         if not isinstance(part, dict):
             return "-"
@@ -144,7 +179,8 @@ def render_lookbook():
         color = part.get("color", "-")
         cat_zh = CATEGORY_ZH.get(cat, cat)
         color_zh = COLOR_ZH.get(color, color)
-        return f"{cat_zh} · {color_zh}"
+        color_chip = _color_chip(color) if color != "-" else color_zh
+        return f"{cat_zh} · {color_chip}"
 
     html_items = "".join(
         f"""
