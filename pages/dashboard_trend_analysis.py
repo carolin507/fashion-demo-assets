@@ -1,9 +1,47 @@
 # pages/dashboard_trend_analysis.py
+import re
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 from modules.analytics.insights.sales_insights import _fmt_pct
 WARM = ["#FF5A5F", "#F97316", "#E9C46A", "#F4A261", "#FB7185", "#F59E0B"]
+COLOR_HEXES = {
+    "red": "#ef4444",
+    "green": "#22c55e",
+    "blue": "#3b82f6",
+    "black": "#111827",
+    "white": "#f3f4f6",
+    "beige": "#f5deb3",
+    "brown": "#92400e",
+    "pink": "#ec4899",
+    "orange": "#f97316",
+    "yellow": "#facc15",
+    "purple": "#a855f7",
+    "gray": "#6b7280",
+    "grey": "#6b7280",
+    "navy": "#1f2937",
+    "khaki": "#c3b091",
+    "cream": "#fff4e5",
+}
+
+
+def _build_color_map(values: pd.Series | list[str]):
+    """Map color labels to actual display colors; fallback to a safe palette."""
+    palette = iter(px.colors.qualitative.Safe + px.colors.qualitative.Set3)
+    color_map = {}
+    for v in values:
+        if pd.isna(v):
+            continue
+        raw = str(v)
+        key = raw.lower().strip()
+        if key in COLOR_HEXES:
+            color_map[raw] = COLOR_HEXES[key]
+        elif re.match(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$", key):
+            color_map[raw] = raw
+        else:
+            color_map[raw] = next(palette, "#8d8d8d")
+    return color_map
 
 
 @st.cache_data
@@ -159,21 +197,25 @@ def render_trend_analysis():
     st.markdown("#### 上身 / 下身色彩分佈")
     col_ct, col_cb = st.columns(2)
     with col_ct:
+        top_counts = _counts(df.get("top_color"))
         fig_top_color = px.pie(
-            _counts(df.get("top_color")),
+            top_counts,
             names="value",
             values="count",
-            color_discrete_sequence=WARM,
+            color="value",
+            color_discrete_map=_build_color_map(top_counts["value"]),
         )
         fig_top_color.update_traces(textinfo="percent+label")
         fig_top_color.update_layout(title="上身色彩", margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="white")
         st.plotly_chart(fig_top_color, use_container_width=True)
     with col_cb:
+        bottom_counts = _counts(df.get("bottom_color"))
         fig_bottom_color = px.pie(
-            _counts(df.get("bottom_color")),
+            bottom_counts,
             names="value",
             values="count",
-            color_discrete_sequence=WARM,
+            color="value",
+            color_discrete_map=_build_color_map(bottom_counts["value"]),
         )
         fig_bottom_color.update_traces(textinfo="percent+label")
         fig_bottom_color.update_layout(title="下身色彩", margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="white")
@@ -202,6 +244,7 @@ def render_trend_analysis():
                 x="year_month",
                 y="count",
                 color="color",
+                color_discrete_map=_build_color_map(trend["color"]),
                 title="Top 5 色系月度出現次數",
             )
             fig_trend.update_layout(
@@ -225,18 +268,36 @@ def render_trend_analysis():
     if color_pairs.empty:
         st.info("目前沒有可用的色彩搭配資料。")
     else:
-        fig_pair = px.bar(
-            color_pairs,
-            x="count",
+        LEFT_X, RIGHT_X = 0, 0.55  # 拉近上下身圓點距離
+        dots = []
+        for _, row in color_pairs.iterrows():
+            top_c, bottom_c = row["pair"].split(" / ", 1)
+            dots.append({"pair": row["pair"], "piece": "Top", "x": LEFT_X, "count": row["count"], "color": top_c})
+            dots.append({"pair": row["pair"], "piece": "Bottom", "x": RIGHT_X, "count": row["count"], "color": bottom_c})
+
+        dot_df = pd.DataFrame(dots)
+        fig_pair = px.scatter(
+            dot_df,
+            x="x",
             y="pair",
-            orientation="h",
-            text="count",
-            color_discrete_sequence=[ACCENT],
+            color="color",
+            size="count",
+            size_max=30,
+            color_discrete_map=_build_color_map(dot_df["color"]),
+            hover_data={"count": True, "piece": True, "pair": False, "color": True},
         )
-        fig_pair.update_traces(textposition="outside")
+        fig_pair.update_traces(marker=dict(line=dict(width=1, color="#ffffff")))
         fig_pair.update_layout(
-            xaxis_title="出現次數",
+            xaxis=dict(
+                tickmode="array",
+                tickvals=[LEFT_X, RIGHT_X],
+                ticktext=["Top", "Bottom"],
+                title=None,
+                showgrid=False,
+                range=[LEFT_X - 0.2, RIGHT_X + 0.2],
+            ),
             yaxis_title="色彩搭配（上 / 下）",
+            legend_title="顏色",
             margin=dict(l=10, r=40, t=20, b=10),
             plot_bgcolor="white",
             paper_bgcolor="white",

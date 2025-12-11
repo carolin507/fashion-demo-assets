@@ -98,19 +98,21 @@ def render_project_intro():
             .bi-hero { display:grid; grid-template-columns:1.05fr 1fr; gap:18px; align-items:center; }
             .bi-copy h3 { margin:0 0 8px; font-size:20px; color:#3a2720; }
             .bi-copy p { margin:0 0 12px; color:#5a463c; line-height:1.7; }
-            .bi-points { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
-            .bi-point { background:#fffaf6; border-radius:12px; padding:10px 12px; border:1px solid rgba(0,0,0,0.04); box-shadow:0 8px 20px rgba(120,70,40,0.06); }
-            .bi-point h5 { margin:0 0 6px; font-size:14px; color:#3a2720; }
-            .bi-point ul { margin:0; padding-left:16px; color:#4a372f; line-height:1.6; font-size:13px; }
+            .bi-points { display:grid; grid-template-columns:repeat(2,minmax(240px,1fr)); gap:12px; align-items:stretch; }
+            .bi-point { background:#fffaf6; border-radius:12px; padding:12px 14px; border:1px solid rgba(0,0,0,0.04); box-shadow:0 8px 20px rgba(120,70,40,0.06); display:flex; flex-direction:column; gap:10px; }
+            .bi-point h5 { margin:0 0 4px; font-size:14px; color:#3a2720; }
+            .bi-point ul { margin:0; padding-left:16px; color:#4a372f; line-height:1.6; font-size:13px; flex:1; }
+            .bi-point .btn-secondary { margin-top:6px; }
             .tilted-frame { position:relative; width:100%; padding:12px; background:linear-gradient(135deg,#e9ecf5,#f8f9ff); border-radius:18px; box-shadow:0 16px 32px rgba(0,0,0,0.12); }
             .tilted-frame::after { content:""; position:absolute; inset:10px -10px -12px 18px; background:#2f4a80; border-radius:16px; z-index:0; transform:skew(-4deg); opacity:0.9; }
             .tilted-inner { position:relative; z-index:1; border-radius:14px; overflow:hidden; background:white; box-shadow:0 10px 26px rgba(0,0,0,0.12); }
-            .tilted-inner img { width:100%; display:block; }
+            .tilted-inner img { width:100%; display:block; object-fit:cover; height:100%; min-height:220px; }
             @media (max-width: 900px) {
                 .two-col, .cta-block, .lookbook-inline { grid-template-columns:1fr; }
                 .hero-content { padding:26px; }
                 .hero-title { font-size:28px; }
                 .lookbook-carousel { height:280px; }
+                .bi-points { grid-template-columns:1fr; }
             }
             </style>
             """
@@ -133,7 +135,7 @@ def render_project_intro():
                     就能獲得專屬色彩分析、穿搭解析與商品推薦，讓電商從被動陳列進化成主動理解顧客的購物體驗。
                   </p>
                   <div class="hero-cta">
-                    <a class="btn-primary" href="?page=wardrobe">立即體驗 Lookbook Studio Demo</a>
+                    <a class="btn-primary" href="/?page=wardrobe" target="_blank" rel="noreferrer noopener">立即體驗 Lookbook Studio Demo</a>
                     <span class="hero-note">即時解析＋個人化推薦 → 提升轉換與回購</span>
                   </div>
                 </div>
@@ -162,9 +164,6 @@ def render_project_intro():
                       <a class="btn-secondary" href="https://www.deloittedigital.com/nl/en/insights/perspective/marketing-trends-2025.html" style="margin-top:6px;">了解更多</a>
                     </div>
                   </div>
-                  <div class="stat-cta">
-                    <a class="btn-secondary" href="?page=dashboard">查看趨勢 Dashboard</a>
-                  </div>
                 </div>
               </section>
 
@@ -178,7 +177,7 @@ def render_project_intro():
                     <li class="tagline">Demo：上傳一張照片，立即得到顏色 / 花紋 / 類別標籤，並可同步看到色票。</li>
                   </ul>
                   <div style="margin-top:12px;">
-                    <a class="btn-secondary" href="?page=wardrobe">前往 AI 解析與推薦 Demo</a>
+                    <a class="btn-secondary" href="/?page=wardrobe" target="_blank" rel="noreferrer noopener">前往 AI 解析與推薦 Demo</a>
                   </div>
                 </div>
                 <div class="image-frame">
@@ -199,7 +198,7 @@ def render_project_intro():
                   </ul>
                   <div class="tagline">品牌可即時提供「個人化穿搭與色彩推薦」，提升互動、降低決策門檻。</div>
                   <div style="margin-top:12px;">
-                    <a class="btn-secondary" href="?page=lookbook">查看更多街拍參照</a>
+                    <a class="btn-secondary" href="/?page=wardrobe" target="_blank" rel="noreferrer noopener">啟動共現推薦 Demo</a>
                   </div>
                 </div>
               </section>
@@ -214,7 +213,7 @@ def render_project_intro():
                       <li>同步作為推薦引擎的參照素材，亦可用於行銷創意。</li>
                     </ul>
                     <div style="margin-top:12px;">
-                      <a class="btn-secondary" href="?page=lookbook">開啟 Lookbook 全部靈感</a>
+                      <a class="btn-secondary" href="/?page=lookbook" target="_blank" rel="noreferrer noopener">開啟 Lookbook 全部靈感</a>
                     </div>
                   </div>
                   <div class="lookbook-carousel">
@@ -239,7 +238,7 @@ def render_project_intro():
                           <li>上下身色彩占比、年度趨勢</li>
                           <li>常見配色組合、上架建議</li>
                         </ul>
-                        <div style="margin-top:8px;"><a class="btn-secondary" href="?page=dashboard">進入色彩趨勢</a></div>
+                        <div style="margin-top:8px;"><a class="btn-secondary" href="/?page=dashboard" target="_blank" rel="noreferrer noopener">進入色彩趨勢</a></div>
                       </div>
                       <div class="bi-point">
                         <h5>CRM 洞察</h5>
@@ -247,7 +246,7 @@ def render_project_intro():
                           <li>VIP 比例、Recency & Monetary</li>
                           <li>國家 / 渠道分佈、留存走勢</li>
                         </ul>
-                        <div style="margin-top:8px;"><a class="btn-secondary" href="?page=crm">進入 CRM</a></div>
+                        <div style="margin-top:8px;"><a class="btn-secondary" href="/?page=crm" target="_blank" rel="noreferrer noopener">進入 CRM</a></div>
                       </div>
                       <div class="bi-point">
                         <h5>銷售表現</h5>
@@ -255,7 +254,7 @@ def render_project_intro():
                           <li>Top Product、Price Range</li>
                           <li>促銷 / 新品 A/B 成效</li>
                         </ul>
-                        <div style="margin-top:8px;"><a class="btn-secondary" href="?page=sales">進入銷售</a></div>
+                        <div style="margin-top:8px;"><a class="btn-secondary" href="/?page=sales" target="_blank" rel="noreferrer noopener">進入銷售</a></div>
                       </div>
                       <div class="bi-point">
                         <h5>評論與 VOC</h5>
@@ -263,13 +262,13 @@ def render_project_intro():
                           <li>評分分布、情緒趨勢</li>
                           <li>正負面關鍵字、客服 SOP</li>
                         </ul>
-                        <div style="margin-top:8px;"><a class="btn-secondary" href="?page=reviews">進入評論</a></div>
+                        <div style="margin-top:8px;"><a class="btn-secondary" href="/?page=reviews" target="_blank" rel="noreferrer noopener">進入評論</a></div>
                       </div>
                     </div>
                   </div>
                   <div class="tilted-frame">
                     <div class="tilted-inner">
-                      <img src="{info_base}/Dashboard_CRM客戶分析_part.png" alt="CRM dashboard preview">
+                      <img src="{base}/Dashboard_CRM_part.png" alt="CRM dashboard preview">
                     </div>
                   </div>
                 </div>
@@ -287,7 +286,7 @@ def render_project_intro():
                       <li>強化商品曝光：以顏色 / 風格 / 場景導購。</li>
                       <li>降低內容製作成本：街拍素材可作創意來源。</li>
                     </ul>
-                    <div style="margin-top:10px;"><a class="btn-secondary" href="?page=wardrobe">立即體驗推薦流程</a></div>
+                    <div style="margin-top:10px;"><a class="btn-secondary" href="/?page=wardrobe" target="_blank" rel="noreferrer noopener">立即體驗推薦流程</a></div>
                   </div>
                   <div class="usecase-card">
                     <h4>對顧客</h4>
@@ -335,7 +334,7 @@ def render_project_intro():
                 <div class="cta-text">
                   <h3>立即體驗 Lookbook Studio</h3>
                   <p>探索 AI 如何理解穿搭、提供推薦，並強化品牌的個人化購物旅程。</p>
-                  <a class="btn-primary" href="?page=wardrobe">預約 Demo / 索取 PoC</a>
+                  <a class="btn-primary" href="/?page=wardrobe" target="_blank" rel="noreferrer noopener">預約 Demo / 索取 PoC</a>
                 </div>
                 <div class="cta-img">
                   <img src="{base}/AI穿搭推薦_251210_part.png" alt="lookbook studio preview">

@@ -3,7 +3,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from modules.analytics.insights.review_insights import generate_review_insights
-WARM = ["#FF5A5F", "#F97316", "#E9C46A", "#F4A261", "#FB7185", "#F59E0B"]
+
+POSITIVE_COLORS = ["#22C55E", "#34D399", "#4ADE80", "#86EFAC", "#A7F3D0"]
+NEGATIVE_COLORS = ["#EF4444", "#F97316", "#FB7185", "#FDBA74", "#FECACA"]
 
 
 @st.cache_data
@@ -15,11 +17,11 @@ def load_reviews_data():
 
 
 def render_reviews_dashboard():
-    ACCENT = "#FF5A5F"
+    ACCENT = "#F59E0B"
     SAND = "#F9F5F0"
     INK = "#1C1917"
     MUTED = "#78716C"
-    px.defaults.color_discrete_sequence = WARM
+    px.defaults.color_discrete_sequence = POSITIVE_COLORS
     px.defaults.color_continuous_scale = "OrRd"
 
     st.markdown(
@@ -155,7 +157,7 @@ def render_reviews_dashboard():
             x="word",
             y="count",
             text_auto=True,
-            color_discrete_sequence=WARM,
+            color_discrete_sequence=POSITIVE_COLORS,
         )
         fig_kw_pos.update_layout(xaxis_tickangle=-45, margin=dict(l=10, r=10, t=10, b=60))
         st.plotly_chart(fig_kw_pos, use_container_width=True)
@@ -171,7 +173,7 @@ def render_reviews_dashboard():
             x="word",
             y="count",
             text_auto=True,
-            color_discrete_sequence=WARM,
+            color_discrete_sequence=NEGATIVE_COLORS,
         )
         fig_kw_neg.update_layout(xaxis_tickangle=-45, margin=dict(l=10, r=10, t=10, b=60))
         st.plotly_chart(fig_kw_neg, use_container_width=True)
@@ -192,7 +194,7 @@ def render_reviews_dashboard():
             x="Department Name",
             y="count",
             text_auto=True,
-            color_discrete_sequence=WARM,
+            color_discrete_sequence=POSITIVE_COLORS,
         )
         fig_pos_dept.update_layout(
             xaxis_title="部門",
@@ -217,7 +219,7 @@ def render_reviews_dashboard():
             x="Department Name",
             y="count",
             text_auto=True,
-            color_discrete_sequence=WARM,
+            color_discrete_sequence=NEGATIVE_COLORS,
         )
         fig_neg_dept.update_layout(
             xaxis_title="部門",
@@ -252,7 +254,7 @@ def render_reviews_dashboard():
         x="age_bin",
         y="rating",
         text_auto=True,
-        color_discrete_sequence=WARM,
+        color_discrete_sequence=[ACCENT],
     )
     fig_age.update_layout(
         title="Average Rating by Age Bin",
@@ -300,10 +302,10 @@ def render_reviews_dashboard():
 
     with col_lp:
         st.markdown("##### 正面最新 5 筆")
-        _review_cards(positive_reviews, "Positive", "#22C55E")
+        _review_cards(positive_reviews, "Positive", POSITIVE_COLORS[0])
     with col_ln:
         st.markdown("##### 負面最新 5 筆")
-        _review_cards(negative_reviews, "Negative", "#EF4444")
+        _review_cards(negative_reviews, "Negative", NEGATIVE_COLORS[0])
 
     st.markdown("---")
     st.markdown(

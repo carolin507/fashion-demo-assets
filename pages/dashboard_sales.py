@@ -4,7 +4,25 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from modules.analytics.insights.sales_insights import generate_sales_insights
-WARM = ["#FF5A5F", "#F97316", "#E9C46A", "#F4A261", "#FB7185", "#F59E0B"]
+
+# Warm, red-leaning palette to keep all pies cohesive
+WARM = [
+    "#E12D39",
+    "#F14952",
+    "#FF5A5F",
+    "#FF7A70",
+    "#FF9E7A",
+    "#F97316",
+    "#F4A261",
+    "#F59E0B",
+    "#FBBF24",
+]
+WARM_EXT = (
+    px.colors.sequential.Reds
+    + px.colors.sequential.OrRd
+    + px.colors.sequential.YlOrRd
+    + WARM
+)
 
 
 @st.cache_data
@@ -99,12 +117,7 @@ def render_sales_dashboard():
         )
 
     def _color_map(labels):
-        palette = (
-            px.colors.qualitative.Alphabet
-            + px.colors.qualitative.Set3
-            + px.colors.qualitative.Pastel
-            + px.colors.qualitative.Bold
-        )
+        palette = WARM_EXT
         return {label: palette[i % len(palette)] for i, label in enumerate(labels)}
 
     # KPI row
@@ -165,10 +178,10 @@ def render_sales_dashboard():
         fig_top10 = go.Figure()
         fig_top10.add_trace(
             go.Bar(
-                x=top_sorted["revenue"][::-1],
-                y=top_sorted["sku"][::-1],
+                x=top_sorted["revenue"],
+                y=top_sorted["sku"],
                 orientation="h",
-            marker=dict(color=WARM[3]),
+                marker=dict(color=WARM[3]),
                 hoverinfo="skip",
                 showlegend=False,
                 width=0.4,
@@ -176,11 +189,11 @@ def render_sales_dashboard():
         )
         fig_top10.add_trace(
             go.Scatter(
-                x=top_sorted["revenue"][::-1],
-                y=top_sorted["sku"][::-1],
+                x=top_sorted["revenue"],
+                y=top_sorted["sku"],
                 mode="markers+text",
                 marker=dict(color=WARM[0], size=12),
-                text=[f"${v:,.0f}" for v in top_sorted["revenue"][::-1]],
+                text=[f"${v:,.0f}" for v in top_sorted["revenue"]],
                 textposition="middle right",
                 hovertemplate="SKU %{y}<br>Revenue: $%{x:,.2f}<extra></extra>",
                 showlegend=False,
@@ -198,8 +211,7 @@ def render_sales_dashboard():
         fig_top10.update_yaxes(
             type="category",
             categoryorder="array",
-            categoryarray=list(top_sorted["sku"][::-1]),
-            autorange="reversed",
+            categoryarray=list(top_sorted["sku"]),
             gridcolor="#F5F5F4",
         )
         st.plotly_chart(fig_top10, use_container_width=True)
