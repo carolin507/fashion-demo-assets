@@ -71,21 +71,102 @@ def render_wardrobe(RECOMMENDER: GenderedRecommender):
     # ============================================================
     # STEP 1：上傳圖片 + 性別
     # ============================================================
-    st.markdown(card(
-        "STEP 1｜上傳你的穿搭照",
-        "<p class='subtle'>選擇性別並上傳穿搭圖片。</p>"
-    ), unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    :where(div[data-testid="stVerticalBlock"]:has(> .step1-card-sentinel)) {
+        background: linear-gradient(135deg, #fffaf3, #f3f0ea);
+        border: 1px solid #e6dece;
+        border-radius: 16px;
+        padding: 18px 18px 12px;
+        box-shadow: 0 14px 28px rgba(0,0,0,0.06);
+        margin-bottom: 16px;
+    }
+    .step1-title {font-weight: 800; font-size: 18px; color: #2f241e; margin-bottom: 6px;}
+    .step1-desc {font-size: 13px; color: #6a5f52; margin-bottom: 12px;}
+    .gender-box {
+        border: 1px solid #e6dece;
+        background: linear-gradient(135deg, #fff7ee, #f3f0ea);
+        border-radius: 14px;
+        padding: 14px 16px 10px;
+        box-shadow: 0 14px 28px rgba(0,0,0,0.06);
+        margin-bottom: 12px;
+    }
+    .gender-box .gender-label {
+        font-weight: 700;
+        color: #3a2b1f;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .gender-box .pill {
+        background: #c7773c;
+        color: #fff;
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+    }
+    .gender-box .hint {
+        font-size: 13px;
+        color: #6a5f52;
+        margin-top: 6px;
+    }
+    .gender-box [data-testid="stRadio"] > div[role="radiogroup"] {
+        display: flex;
+        gap: 10px;
+    }
+    .gender-box [data-testid="stRadio"] label {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid #e6dece;
+        background: #fff;
+        box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+        min-width: 110px;
+        justify-content: center;
+    }
+    .gender-box [data-testid="stRadio"] p {
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-    col_left, col_right = st.columns([1, 2])
+    with st.container():
+        st.markdown('<div class="step1-card-sentinel"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="step1-title">STEP 1｜上傳你的穿搭照</div>', unsafe_allow_html=True)
+        st.markdown('<div class="step1-desc">選擇性別並上傳穿搭圖片。</div>', unsafe_allow_html=True)
 
-    with col_left:
-        gender = st.selectbox("性別", ["women", "men"])
+        col_left, col_right = st.columns([1, 2])
 
-    with col_right:
-        uploaded_img = st.file_uploader(
-            "上傳穿搭圖片（JPG / PNG）",
-            type=["jpg", "jpeg", "png"]
-        )
+        with col_left:
+            st.markdown(
+                """
+                <div class="gender-box">
+                    <div class="gender-label">
+                        性別｜Gender
+                        <span class="pill">必選</span>
+                    </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            gender = st.radio(
+                "Gender",
+                ["women", "men"],
+                horizontal=True,
+                format_func=lambda g: "女款" if g == "women" else "男款",
+                label_visibility="collapsed",
+                key="gender-choice",
+            )
+            st.markdown(
+                '<div class="hint">AI 會依性別微調剪裁、版型與風格推薦</div></div>',
+                unsafe_allow_html=True,
+            )
+
+        with col_right:
+            uploaded_img = st.file_uploader(
+                "上傳穿搭圖片（JPG / PNG）",
+                type=["jpg", "jpeg", "png"]
+            )
 
     if not uploaded_img:
         st.markdown(card(

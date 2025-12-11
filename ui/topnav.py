@@ -3,6 +3,7 @@ import streamlit as st
 
 def render_topnav():
     menu = [
+        {"label": "產品頁（新版）", "target": "intro_new"},
         {"label": "解決方案", "target": "intro"},
         {"label": "AI穿搭Showroom", "target": "wardrobe"},
         {"label": "Lookbook靈感牆", "target": "lookbook"},
