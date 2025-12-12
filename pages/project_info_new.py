@@ -61,6 +61,7 @@ def render_project_info_new():
         .strip-item { display:flex; flex-direction:column; gap:4px; align-items:center; }
         .strip-item .dot { width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-weight:800; }
         /* dark panel */
+        .micro-quote { font-weight:800; color:#e3004f; letter-spacing:0.02em; font-size:15px; margin:0 0 6px; }
         .dark-section { background:linear-gradient(135deg,#1b0f12,#381a1f 55%,#731f33); color:#fff7ee; border-radius:16px; padding:30px; box-shadow:0 22px 48px rgba(16,0,8,0.3); }
         .dark-section .engine-head { margin-bottom:12px; }
         .dark-grid { display:grid; grid-template-columns:1fr 0.85fr; gap:18px; align-items:center; }
@@ -113,11 +114,13 @@ def render_project_info_new():
               <div class="two-col" style="align-items:start; text-align:center; gap:18px;">
                 <div class="soft" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
                   <div class="img-frame" style="max-width:520px; margin:0 auto;"><img src="{info_base}/storytelling1.webp" alt="缺乏搭配靈感"></div>
+                  <div class="micro-quote">「我該穿什麼？」</div>
                   <h3 style="margin:6px 0 4px;">缺乏搭配靈感</h3>
                   <p style="margin:0; text-align:center;">消費者在選購服飾時，時常面臨選擇困難與搭配的挑戰，影響購物體驗與意願。</p>
                 </div>
                 <div class="soft" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
                   <div class="img-frame" style="max-width:520px; margin:0 auto;"><img src="{info_base}/storytelling2.jpg" alt="難以掌握市場趨勢"></div>
+                  <div class="micro-quote">「我們該賣什麼？」</div>
                   <h3 style="margin:6px 0 4px;">難以掌握市場趨勢</h3>
                   <p style="margin:0; text-align:center;">電商品牌若無法精準預測熱門色系、款式與搭配組合，將面臨庫存風險與錯失商機的壓力。</p>
                 </div>
@@ -176,8 +179,8 @@ def render_project_info_new():
                   <div class="panel" style="margin-top:10px;">
                     <h3 style="display:flex; gap:8px; align-items:center; margin:0 0 10px; color:#2d0f12;">Sales Performance & Insights <span style="font-size:12px; color:#8b6f64; background:#f5efeb; border-radius:8px; padding:4px 8px; margin-left:auto;">Real-time</span></h3>
                     <div class="two-col" style="margin-top:10px; gap:10px;">
-                      <div class="img-frame"><img src="{info_base}/dashboard.png" alt="dashboard overview"></div>
-                      <div class="img-frame"><img src="{info_base}/dashboard_detail.png" alt="dashboard detail"></div>
+                      <div class="img-frame"><img src="{info_base}/dashboard_clear.png" alt="dashboard overview"></div>
+                      <div class="img-frame"><img src="{info_base}/dashboard_clear.png" alt="dashboard detail"></div>
                     </div>
                   </div>
                 </div>
@@ -233,6 +236,3 @@ def render_project_info_new():
     )
 
     components.html(css + html, height=7600, scrolling=True)
-
-
-

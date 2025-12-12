@@ -1,11 +1,20 @@
 # pages/dashboard_reviews.py
-import streamlit as st
+from pathlib import Path
+
 import pandas as pd
 import plotly.express as px
+import streamlit as st
 from modules.analytics.insights.review_insights import generate_review_insights
+from wordcloud import WordCloud
 
 POSITIVE_COLORS = ["#22C55E", "#34D399", "#4ADE80", "#86EFAC", "#A7F3D0"]
 NEGATIVE_COLORS = ["#EF4444", "#F97316", "#FB7185", "#FDBA74", "#FECACA"]
+FONT_CANDIDATES = [
+    Path("assets/fonts/NotoSansTC-Regular.otf"),
+    Path("assets/fonts/NotoSansTC-Regular.ttf"),
+    Path("assets/fonts/NotoSansTC-Medium.otf"),
+]
+FONT_PATH = next((str(p) for p in FONT_CANDIDATES if p.exists()), None)
 
 
 @st.cache_data
@@ -14,6 +23,55 @@ def load_reviews_data():
     reviews = pd.read_csv(base + "reviews_processed.csv")
     keywords = pd.read_csv(base + "review_keywords.csv")
     return reviews, keywords
+
+
+def _top_keywords_from_reviews(df: pd.DataFrame, n: int = 20) -> pd.DataFrame:
+    if df.empty:
+        return pd.DataFrame({"word": [], "count": []})
+    words = (
+        df["review"]
+        .fillna("")
+        .str.lower()
+        .str.replace(r"[^a-z0-9\\s]", " ", regex=True)
+        .str.split()
+    )
+    counts: dict[str, int] = {}
+    for lst in words:
+        for w in lst:
+            if len(w) <= 2:
+                continue
+            counts[w] = counts.get(w, 0) + 1
+    freq = pd.DataFrame({"word": list(counts.keys()), "count": list(counts.values())})
+    return freq.sort_values("count", ascending=False).head(n)
+
+
+def _wordcloud_array(freq_df: pd.DataFrame, colormap: str):
+    if freq_df.empty:
+        return None
+    clean_df = (
+        freq_df.copy()
+        .dropna(subset=["word", "count"])
+        .assign(word=lambda d: d["word"].astype(str))
+        .assign(count=lambda d: pd.to_numeric(d["count"], errors="coerce"))
+    )
+    clean_df = clean_df[clean_df["count"] > 0].head(20)
+    if clean_df.empty:
+        return None
+    freq_map = dict(zip(clean_df["word"], clean_df["count"]))
+    if not freq_map:
+        return None
+    wc = WordCloud(
+        width=760,
+        height=440,
+        background_color="white",
+        colormap=colormap,
+        prefer_horizontal=0.9,
+        max_words=20,
+        font_path=FONT_PATH,
+        margin=2,
+        max_font_size=110,
+    ).generate_from_frequencies(freq_map)
+    return wc.to_array()
 
 
 def render_reviews_dashboard():
@@ -83,25 +141,6 @@ def render_reviews_dashboard():
             unsafe_allow_html=True,
         )
 
-    def _top_keywords_from_reviews(df: pd.DataFrame, n: int = 20):
-        if df.empty:
-            return pd.DataFrame({"word": [], "count": []})
-        words = (
-            df["review"]
-            .fillna("")
-            .str.lower()
-            .str.replace(r"[^a-z0-9\\s]", " ", regex=True)
-            .str.split()
-        )
-        counts = {}
-        for lst in words:
-            for w in lst:
-                if len(w) <= 2:
-                    continue
-                counts[w] = counts.get(w, 0) + 1
-        freq = pd.DataFrame({"word": list(counts.keys()), "count": list(counts.values())})
-        return freq.sort_values("count", ascending=False).head(n)
-
     # KPI row
     st.markdown("#### 評價關鍵指標 KPI")
     total_reviews = len(reviews)
@@ -139,12 +178,11 @@ def render_reviews_dashboard():
 
     st.markdown("---")
 
-    # Sentiment split
-    st.markdown("#### 正面 / 負面 評價對照")
+    # Sentiment split + word clouds
+    st.markdown("#### 正面 / 負面 關鍵字 (Top 20 文字雲)")
     positive_reviews = reviews[reviews["sentiment_label"].str.lower() == "positive"]
     negative_reviews = reviews[reviews["sentiment_label"].str.lower() == "negative"]
 
-    # Keywords by sentiment
     col_pos, col_neg = st.columns(2)
     with col_pos:
         st.markdown("##### 正面關鍵字 Top 20")
@@ -152,6 +190,11 @@ def render_reviews_dashboard():
             pos_kw = keywords[keywords["sentiment"].str.lower() == "positive"].head(20)
         else:
             pos_kw = _top_keywords_from_reviews(positive_reviews)
+        pos_wc = _wordcloud_array(pos_kw, colormap="YlGn")
+        if pos_wc is not None:
+            st.image(pos_wc, use_container_width=True, caption="正面關鍵字文字雲")
+        else:
+            st.info("尚無正面關鍵字資料")
         fig_kw_pos = px.bar(
             pos_kw,
             x="word",
@@ -168,6 +211,11 @@ def render_reviews_dashboard():
             neg_kw = keywords[keywords["sentiment"].str.lower() == "negative"].head(20)
         else:
             neg_kw = _top_keywords_from_reviews(negative_reviews)
+        neg_wc = _wordcloud_array(neg_kw, colormap="OrRd")
+        if neg_wc is not None:
+            st.image(neg_wc, use_container_width=True, caption="負面關鍵字文字雲")
+        else:
+            st.info("尚無負面關鍵字資料")
         fig_kw_neg = px.bar(
             neg_kw,
             x="word",
