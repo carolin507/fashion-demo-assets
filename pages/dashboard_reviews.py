@@ -97,6 +97,22 @@ def render_reviews_dashboard():
     )
 
     st.markdown("## 顧客評價分析 Review & VOC Dashboard")
+    st.markdown(
+        f"""
+        <div style="
+            font-size:13px;
+            color:{MUTED};
+            background:rgba(0,0,0,0.03);
+            padding:8px 10px;
+            border-radius:10px;
+            margin:4px 0 10px;
+        ">
+        ※本產品展示的數據模型與分析成果，是基於公開的 Kaggle 電商資料集進行建構與演示。點此前往
+        <a href="https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews" target="_blank">Kaggle 資料集連結</a>。
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     reviews, keywords = load_reviews_data()
     insights = generate_review_insights(reviews)
@@ -160,21 +176,65 @@ def render_reviews_dashboard():
 
     st.markdown("---")
 
-    # Rating distribution
-    st.markdown("#### 評分分布（1–5 星）")
-    fig_rating = px.histogram(
-        reviews,
-        x="rating",
-        nbins=5,
-        color_discrete_sequence=[ACCENT],
-    )
-    fig_rating.update_layout(
-        title="Rating Distribution",
-        plot_bgcolor="white",
-        paper_bgcolor="white",
-        margin=dict(l=10, r=10, t=40, b=10),
-    )
-    st.plotly_chart(fig_rating, use_container_width=True)
+    # Rating distribution + Age view side-by-side
+    st.markdown("#### 評分分布（1–5 星）與年齡表現")
+    col_rate, col_age = st.columns(2, gap="large")
+
+    with col_rate:
+        rating_counts = (
+            reviews.groupby("rating")
+            .size()
+            .reset_index(name="count")
+            .sort_values("rating")
+        )
+        fig_rating = px.pie(
+            rating_counts,
+            names="rating",
+            values="count",
+            color="rating",
+            color_discrete_sequence=[ACCENT, "#FCD34D", "#F59E0B", "#EA580C", "#C2410C"],
+            hole=0.35,
+        )
+        fig_rating.update_traces(textposition="inside", textinfo="percent+label")
+        fig_rating.update_layout(
+            title="Rating Share (1–5 星)",
+            margin=dict(l=0, r=0, t=40, b=0),
+            showlegend=False,
+        )
+        st.plotly_chart(fig_rating, use_container_width=True)
+
+    with col_age:
+        st.caption("年齡層 vs 平均評分（10 歲區間）")
+        age_bins = list(range(0, 101, 10))
+        age_labels = [f"{b}-{b+9}" for b in age_bins[:-1]]
+        reviews["age_bin"] = pd.cut(
+            reviews["Age"],
+            bins=age_bins,
+            labels=age_labels,
+            right=False,
+            include_lowest=True,
+        )
+        age_rating = (
+            reviews.groupby("age_bin")["rating"]
+            .mean()
+            .reset_index()
+            .sort_values("age_bin")
+        )
+        fig_age = px.line(
+            age_rating,
+            x="age_bin",
+            y="rating",
+            markers=True,
+            line_shape="spline",
+            color_discrete_sequence=[ACCENT],
+        )
+        fig_age.update_layout(
+            title="平均星等（依年齡層）",
+            yaxis_title="平均星等",
+            xaxis_title="年齡區間",
+            margin=dict(l=10, r=10, t=40, b=40),
+        )
+        st.plotly_chart(fig_age, use_container_width=True)
 
     st.markdown("---")
 
@@ -355,17 +415,6 @@ def render_reviews_dashboard():
         st.markdown("##### 負面最新 5 筆")
         _review_cards(negative_reviews, "Negative", NEGATIVE_COLORS[0])
 
-    st.markdown("---")
-    st.markdown(
-        """
-        **資料集來源**
-
-        ① Women’s E-commerce Clothing Reviews（NLP + 聲量）  
-        🔗 https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews  
-        📌 用途：顧客評論、情緒分析、產品缺點洞察、NLP  
-        - 能呈現「客戶之聲 VOC」分析能力
-        """
-    )
 
 
 # Alias for legacy import

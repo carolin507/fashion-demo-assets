@@ -4,6 +4,7 @@ import re
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from modules.analytics.insights.sales_insights import _fmt_pct
 WARM = ["#FF5A5F", "#F97316", "#E9C46A", "#F4A261", "#FB7185", "#F59E0B"]
 COLOR_HEXES = {
@@ -107,6 +108,23 @@ def render_trend_analysis():
     )
 
     st.markdown("## 色彩潮流分析 Trend Analysis")
+    st.markdown(
+        f"""
+        <div style="
+            font-size:13px;
+            color:{MUTED};
+            background:rgba(0,0,0,0.03);
+            padding:8px 10px;
+            border-radius:10px;
+            margin:4px 0 10px;
+        ">
+        We thank the NCHC Sci-DM project for data service and technical support. The project is funded by the Ministry of Science and Technology (MOST) ( MOST 108-2634-F-492-001).
+        <a href="https://scidm.nchc.org.tw/dataset/richwear-fashion-ai" target="_blank">Data source link</a>.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     df = load_trend_data()
 
     def _metric_card(label: str, value: str, helper: str | None = None):
@@ -268,37 +286,62 @@ def render_trend_analysis():
     if color_pairs.empty:
         st.info("目前沒有可用的色彩搭配資料。")
     else:
-        LEFT_X, RIGHT_X = 0, 0.55  # 拉近上下身圓點距離
-        dots = []
+        # Render overlapping circles: bottom first, top on the same center
+        color_map = _build_color_map(pd.Series(sum([p.split(" / ") for p in color_pairs["pair"]], [])))
+        max_count = max(color_pairs["count"].max(), 1)
+        size_min, size_max = 18, 52
+
+        def _size(c: int) -> float:
+            # Make dot sizes more distinguishable
+            return size_min + (size_max - size_min) * (c / max_count)
+
+        fig_pair = go.Figure()
+        overlap_shift = 0  # same x so top/bottom dots fully overlap
+        inner_scale = 0.82  # top dot slightly smaller to reveal the bottom ring
         for _, row in color_pairs.iterrows():
             top_c, bottom_c = row["pair"].split(" / ", 1)
-            dots.append({"pair": row["pair"], "piece": "Top", "x": LEFT_X, "count": row["count"], "color": top_c})
-            dots.append({"pair": row["pair"], "piece": "Bottom", "x": RIGHT_X, "count": row["count"], "color": bottom_c})
+            pair_label = row["pair"]
+            cnt = row["count"]
+            base_size = _size(cnt)
+            # Bottom circle
+            fig_pair.add_trace(
+                go.Scatter(
+                    x=[0],
+                    y=[pair_label],
+                    mode="markers",
+                    marker=dict(
+                        size=base_size,
+                        color=color_map.get(bottom_c, "#8d8d8d"),
+                        line=dict(width=1, color="#ffffff"),
+                        opacity=0.5,  # lighter so top dot stands out
+                    ),
+                    name="Bottom",
+                    hovertemplate=f"搭配: {pair_label}<br>部位: 下<br>顏色: {bottom_c}<br>次數: {cnt}<extra></extra>",
+                    showlegend=False,
+                )
+            )
+            # Top circle, offset to overlap
+            fig_pair.add_trace(
+                go.Scatter(
+                    x=[0],
+                    y=[pair_label],
+                    mode="markers",
+                    marker=dict(
+                        size=base_size * inner_scale,
+                        color=color_map.get(top_c, "#8d8d8d"),
+                        line=dict(width=1.5, color="#ffffff"),
+                        opacity=0.95,
+                    ),
+                    name="Top",
+                    hovertemplate=f"搭配: {pair_label}<br>部位: 上<br>顏色: {top_c}<br>次數: {cnt}<extra></extra>",
+                    showlegend=False,
+                )
+            )
 
-        dot_df = pd.DataFrame(dots)
-        fig_pair = px.scatter(
-            dot_df,
-            x="x",
-            y="pair",
-            color="color",
-            size="count",
-            size_max=30,
-            color_discrete_map=_build_color_map(dot_df["color"]),
-            hover_data={"count": True, "piece": True, "pair": False, "color": True},
-        )
-        fig_pair.update_traces(marker=dict(line=dict(width=1, color="#ffffff")))
         fig_pair.update_layout(
-            xaxis=dict(
-                tickmode="array",
-                tickvals=[LEFT_X, RIGHT_X],
-                ticktext=["Top", "Bottom"],
-                title=None,
-                showgrid=False,
-                range=[LEFT_X - 0.2, RIGHT_X + 0.2],
-            ),
+            xaxis=dict(visible=False, range=[-0.01, 0.01]),
             yaxis_title="色彩搭配（上 / 下）",
-            legend_title="顏色",
-            margin=dict(l=10, r=40, t=20, b=10),
+            margin=dict(l=10, r=20, t=20, b=10),
             plot_bgcolor="white",
             paper_bgcolor="white",
         )

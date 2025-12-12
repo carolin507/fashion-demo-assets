@@ -330,6 +330,26 @@ def render_wardrobe(RECOMMENDER: GenderedRecommender):
 
     st.markdown(html, unsafe_allow_html=True)
 
+    st.markdown(
+        """
+        <div style="
+            margin: 16px 0 0;
+            padding: 10px 12px;
+            border: 1px solid #e7e5e4;
+            background: rgba(0,0,0,0.03);
+            border-radius: 10px;
+            color: #4b5563;
+            font-size: 13px;
+            line-height: 1.55;
+        ">
+          We thank the NCHC Sci-DM project for data service and technical support.
+          The project is funded by the Ministry of Science and Technology (MOST) ( MOST 108-2634-F-492-001).
+          <a href="https://scidm.nchc.org.tw/dataset/richwear-fashion-ai" target="_blank">Data source link</a>.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
     # ============================================================
     # STEP 4：精選商品

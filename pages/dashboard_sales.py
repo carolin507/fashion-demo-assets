@@ -63,6 +63,22 @@ def render_sales_dashboard():
     )
 
     st.markdown("## 銷售分析 Sales Performance Dashboard")
+    st.markdown(
+        f"""
+        <div style="
+            font-size:13px;
+            color:{MUTED};
+            background:rgba(0,0,0,0.03);
+            padding:8px 10px;
+            border-radius:10px;
+            margin:4px 0 10px;
+        ">
+        ※本產品展示的數據模型與分析成果，是基於公開的 Kaggle 電商資料集進行建構與演示。點此前往
+        <a href="https://www.kaggle.com/datasets/shilongzhuang/-women-clothing-ecommerce-sales-data" target="_blank">Kaggle 資料集連結</a>。
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     (
         sales_clean,
@@ -319,18 +335,3 @@ def render_sales_dashboard():
         yaxis_title="營收",
     )
     st.plotly_chart(fig_weekday, use_container_width=True)
-    _insight_box("Insight", insights.get("weekday", []))
-
-    st.markdown("---")
-    st.markdown(
-        """
-        **資料集來源**
-
-        ② Women Clothing E-commerce Sales（銷售分析）  
-        🔗 https://www.kaggle.com/datasets/shilongzhuang/-women-clothing-ecommerce-sales-data  
-        📌 用途：銷售趨勢、品類銷售、價格分析、Top seller  
-        - 真實電商銷售欄位（category、price、quantity）  
-        - 可以做 GMV、AOV、銷售趨勢、季節性分析  
-        - 最能展示「商業 KPI 分析」能力
-        """
-    )

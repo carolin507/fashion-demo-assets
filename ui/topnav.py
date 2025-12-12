@@ -3,15 +3,14 @@ import streamlit as st
 
 def render_topnav():
     menu = [
-        {"label": "產品頁（新版）", "target": "intro_new"},
         {"label": "解決方案", "target": "intro"},
-        {"label": "AI穿搭Showroom", "target": "wardrobe"},
-        {"label": "Lookbook靈感牆", "target": "lookbook"},
+        {"label": "AI 穿搭靈感", "target": "wardrobe"},
+        {"label": "Lookbook 靈感庫", "target": "lookbook"},
         {
-            "label": "商業洞察BI方案",
+            "label": "商業洞察儀表板",
             "children": [
-                ("色彩潮流趨勢", "dashboard"),
-                ("即時銷售分析", "sales"),
+                ("色彩潮流分析", "dashboard"),
+                ("商品銷售分析", "sales"),
                 ("CRM客戶洞察", "crm"),
                 ("顧客評價分析", "reviews"),
             ],
@@ -59,8 +58,12 @@ def render_topnav():
 
     # Show subnav only when viewing BI pages (keeps it collapsed otherwise)
     if bi_children and current in bi_targets:
-        st.markdown('<div class="topnav-subnav">', unsafe_allow_html=True)
-        st.markdown('<div class="topnav-subtitle">商業洞察 BI 方案</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="topnav-subnav">'
+            '<div class="topnav-subtitle">商業智慧 BI</div>'
+            '<div class="pill-row">',
+            unsafe_allow_html=True,
+        )
         pill_cols = st.columns(len(bi_children), gap="small")
         for (text, target), col in zip(bi_children, pill_cols):
             with col:
@@ -68,7 +71,6 @@ def render_topnav():
                     text,
                     key=f"nav_bi_{target}",
                     type="primary" if current == target else "secondary",
-                    use_container_width=True,
                 )
                 if clicked:
                     st.session_state.page = target
@@ -77,4 +79,4 @@ def render_topnav():
                     except Exception:
                         st.experimental_set_query_params(page=target)
                     st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div></div>', unsafe_allow_html=True)

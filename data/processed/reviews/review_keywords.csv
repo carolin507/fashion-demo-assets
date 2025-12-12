@@ -16,7 +16,7 @@ short,1979,Positive
 big,1749,Positive
 other,1717,Positive
 more,1597,Positive
-true,1593,Positive
+TRUE,1593,Positive
 petite,1540,Positive
 black,1320,Positive
 fit,1164,Positive
@@ -62,14 +62,9 @@ first,495,Positive
 small,561,Negative
 large,373,Negative
 short,313,Negative
-cute,304,Negative
 big,282,Negative
-great,271,Negative
-beautiful,242,Negative
-good,230,Negative
 flattering,230,Negative
 thin,228,Negative
-nice,219,Negative
 other,212,Negative
 disappointed,193,Negative
 huge,192,Negative
@@ -108,7 +103,7 @@ comfortable,81,Negative
 thick,80,Negative
 worth,80,Negative
 sad,78,Negative
-true,77,Negative
+TRUE,77,Negative
 gorgeous,75,Negative
 weird,74,Negative
 poor,73,Negative

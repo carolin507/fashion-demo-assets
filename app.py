@@ -22,7 +22,6 @@ from pages.wardrobe import render_wardrobe
 from pages.lookbook import render_lookbook
 from pages.dashboard_trend_analysis import render_color_trends
 from pages.project_intro import render_project_intro
-from pages.project_info_new import render_project_info_new
 from pages.dashboard_crm import render_crm_dashboard
 from pages.dashboard_sales import render_sales_dashboard
 from pages.dashboard_reviews import render_reviews_dashboard
@@ -84,7 +83,7 @@ if "page" not in st.session_state:
 # ------------------------------------------------------------
 # Sync URL param → page routing
 # ------------------------------------------------------------
-allowed_pages = {"wardrobe", "lookbook", "dashboard", "crm", "sales", "reviews", "intro", "intro_new"}
+allowed_pages = {"wardrobe", "lookbook", "dashboard", "crm", "sales", "reviews", "intro"}
 
 try:
     params = st.query_params  # 新版 API
@@ -95,7 +94,7 @@ except Exception:
 if "page" in params:
     value = params["page"]
     page_val = value[0] if isinstance(value, list) else value
-    st.session_state.page = page_val if page_val in allowed_pages else "wardrobe"
+    st.session_state.page = page_val if page_val in allowed_pages else "intro"
 
 
 # ------------------------------------------------------------
@@ -121,9 +120,6 @@ elif page == "dashboard":
 elif page == "intro":
     render_project_intro()
 
-elif page == "intro_new":
-    render_project_info_new()
-
 elif page == "crm":
      render_crm_dashboard()
      
@@ -132,5 +128,3 @@ elif page == "sales":
 
 elif page == "reviews":
     render_reviews_dashboard()
-
-

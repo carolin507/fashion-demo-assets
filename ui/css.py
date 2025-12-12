@@ -51,19 +51,19 @@ def load_global_css():
         z-index: 999;
 
         width: 100%;
-        padding: 12px var(--page-pad);
-        margin: 0 calc(-1 * var(--page-pad)) 4px;   /* ⬅ 移除底部空白（避免底色） */
+        padding: 12px 0;
+        margin: 0 0 8px;   /* keep spacing from banners without offsetting container padding */
 
         display: flex;
         align-items: center;
         justify-content: space-between;
 
         /* ⬅⬅ 背景改為全站主背景色 */
-        background: linear-gradient(140deg, rgba(255,255,255,0.95), rgba(246,240,232,0.94)) !important;
-        border: 1px solid rgba(0,0,0,0.04) !important;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.08) !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
         border-radius: 18px;
-        backdrop-filter: blur(8px);
+        backdrop-filter: none;
     }
 
     /* 左右 cols 的 padding 修正 */
@@ -146,51 +146,81 @@ def load_global_css():
         box-shadow: 0 5px 12px rgba(0,0,0,0.05) !important;
     }
 
-    /* BI sub-nav (centered buttons) */
+    /* BI sub-nav (single-row pill buttons) */
     .topnav-subnav {
         margin: 6px 0 12px;
-        padding: 6px 0 0;
+        padding: 6px 8px 2px;
         width: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 8px;
+        gap: 6px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
     }
     .topnav-subtitle {
         font-size: 12px;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #6f6055;
+        color: #3A1F24;
         font-weight: 700;
-        margin: 0;
+        margin: 0 0 2px 4px;
     }
-    .topnav-subnav .stColumn { padding: 0 !important; }
+    .pill-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        scrollbar-width: thin;
+        justify-content: center;
+        width: 100%;
+    }
+    .pill-row::-webkit-scrollbar { height: 6px; }
+    .pill-row::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 999px; }
+    .pill-row > div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        gap: 6px !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        width: auto !important;
+    }
+    .topnav-subnav .stColumn {
+        padding: 0 !important;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: auto !important;
+    }
+    .topnav-subnav .stButton {
+        flex: 0 0 auto;
+        width: auto !important;
+    }
     .topnav-subnav .stButton > button {
-        padding: 9px 14px !important;
-        border-radius: 12px !important;
+        padding: 8px 12px !important;
+        border-radius: 999px !important;
         font-weight: 600 !important;
-        font-size: 14px !important;
+        font-size: 13px !important;
+        white-space: nowrap;
         transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease !important;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.05) !important;
-    }
-    .topnav-subnav [data-testid="baseButton-secondary"] {
-        background: #f5f0e8 !important;
-        color: #3b312a !important;
-        border: 1px solid rgba(59,45,39,0.12) !important;
         box-shadow: none !important;
+        background: transparent !important;
+        color: #3A1F24 !important;
+        border: 1px solid transparent !important;
     }
     .topnav-subnav [data-testid="baseButton-primary"],
     .topnav-subnav .stButton > button[kind="primary"],
     .topnav-subnav .stButton > button[class*="primary"] {
-        background: linear-gradient(135deg, #2b262f, #3a343d) !important;
-        background-color: #2b262f !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(47,43,51,0.6) !important;
-        box-shadow: 0 10px 22px rgba(47,43,51,0.28) !important;
+        background: #EFE7DF !important;
+        color: #3A1F24 !important;
+        border: 1px solid #d8ccc2 !important;
+        box-shadow: none !important;
     }
     .topnav-subnav .stButton > button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+        transform: translateY(0);
+        background: #f3ede7 !important;
+        border-color: #d8ccc2 !important;
+        box-shadow: none !important;
     }
 
     

@@ -1,4 +1,4 @@
-﻿# pages/dashboard_crm.py
+# pages/dashboard_crm.py
 
 import streamlit as st
 import pandas as pd
@@ -70,8 +70,24 @@ def render_crm_dashboard():
         unsafe_allow_html=True,
     )
 
-    st.markdown("### CRM客戶洞察")
+    st.markdown("## CRM客戶洞察")
     st.caption("仿照 React 版介面：聚焦 VIP、銷售渠道與暢銷商品。")
+    st.markdown(
+        f"""
+        <div style="
+            font-size:13px;
+            color:{MUTED};
+            background:rgba(0,0,0,0.03);
+            padding:8px 10px;
+            border-radius:10px;
+            margin:4px 0 10px;
+        ">
+        ※本產品展示的數據模型與分析成果，是基於公開的 Kaggle 電商資料集進行建構與演示。點此前往
+        <a href="https://www.kaggle.com/datasets/joycemara/european-fashion-store-multitable-dataset" target="_blank">Kaggle 資料集連結</a>。
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     total_customers = rfm["customer_id"].nunique() if "customer_id" in rfm.columns else len(rfm)
     vip_count = int((rfm["segment"] == "VIP / Champions").sum()) if "segment" in rfm.columns else None
@@ -350,17 +366,3 @@ def render_crm_dashboard():
         )
     else:
         st.info("缺少 RFM 欄位，無法顯示樣本表格。")
-
-    st.markdown("---")
-    st.markdown(
-        """
-        **資料集來源**
-
-        ③ European Fashion Store Multi-table（SQL + 會員模型）  
-        🔗 https://www.kaggle.com/datasets/joycemara/european-fashion-store-multitable-dataset  
-        📌 用途：會員分析、RFM、購買頻率、地區比較  
-        - 有多張 table（customers、products、transactions 等）  
-        - 最適合展示 JOIN、Window function、Segmentation  
-        - 呈現「CRM 與商業決策能力」
-        """
-    )
